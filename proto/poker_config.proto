@@ -1,0 +1,314 @@
+import "poker_common.proto";
+import "poker_data.proto";
+
+message PBNode
+{
+	required ENNodeType ntype = 1;
+	required int32 nsvid = 2;
+	required string ip = 3;
+	required int32 port = 4;
+}
+
+message PBUserSvrdConfig
+{
+	optional PBNode redis_svrd_config = 1;
+}
+
+message PBSvrdNode
+{
+	optional string ip = 1; //ip
+	optional int32 port = 2; //port
+	optional int32 index = 3; //
+	optional int32 svid_id = 4;
+}
+
+message PBRouteSvrdConfig
+{
+	repeated PBSvrdNode routes = 1; //对于子节点来说 可以有多个route
+	repeated PBSvrdNode connects = 2; //链接服
+}
+
+message PBGlobalRedisConfig
+{
+	optional string ip = 1;
+	optional int32 port = 2;
+}
+
+message PBDBProxySvrdConfig 
+{
+	optional PBSvrdNode rank = 1;
+	optional PBSvrdNode account = 2;
+	repeated PBSvrdNode users = 3;
+	optional PBSvrdNode ssdb = 4;
+}
+
+message PBLogsvrdConfig
+{
+	optional string ip		= 1;
+	optional int32	port	= 2;
+
+	optional string db_host	= 3;
+	optional uint32 db_port	= 4;
+	optional string db_user	= 5;
+	optional string db_pwd	= 6;
+	optional string db_name	= 7;
+	optional uint32 max_sql_num	= 8;
+}
+
+message PBLevelItem
+{
+	optional uint32 level	= 1;
+	optional uint32 min_exp	= 2;
+}
+message PBTTypeItem
+{
+	optional ENTableType	table_type		= 1;
+	optional uint32			max_exp			= 2;
+	optional uint32			win_main_multi	= 3;
+	optional uint32			win_other_multi	= 4;
+}
+message PBExpConfig
+{
+	repeated PBLevelItem	level_list	= 1;
+	repeated PBTTypeItem	type_list	= 2;
+}
+
+message PBTimeScoreItem
+{
+	optional int32 time = 1;
+	optional int32 score = 2;
+}
+
+message PBWinScoreConfig
+{
+	repeated PBTimeScoreItem time_score_list = 1;
+}
+
+message PBCostItem
+{
+	optional int32 round = 1;
+	optional int32 cost = 2;
+	optional int32 game_type = 3;
+	optional int32 seat_num = 4;
+}
+
+message PBFreeItem
+{
+	optional int32 table_type = 1;
+	optional int32 seat_num = 2;
+}
+
+message PBCostConfig
+{
+	repeated PBCostItem cost_item_list = 1;
+	optional int32 cost_lzdaer = 2 [default = 3];	// 每8局所需房卡 	3
+	optional int32 cost_lxdaer = 3 [default = 9]; 	// 半圈所需房卡		9
+	//optional int32 cost_gldaer = 4 [default = 9]; 	// 半圈所需房卡		9
+	repeated int32 free_games = 5;		// ENTableType
+	repeated int32 free_games_2 = 6;	// 二级免费 0x34 表示EN_Table_DAER的4人玩法免费
+	repeated PBFreeItem free_items = 7;	// 二级免费 <62, 2> 表示 EnTableType为64的2人玩法免费
+	repeated PBCostItem special_cost_item_list = 8;	//特殊配置
+}
+
+message PBEcsEip
+{
+	optional string ecs = 1;
+	optional string eip = 2;
+}
+
+message PBMonitorGroup
+{
+	optional int32 gtype = 1; //组类型
+	optional string main_key = 4; //主键名
+	repeated PBEcsEip ecs_eip_list = 5; //ecs-eip 列表
+	optional string closed_key = 6; //关闭列表
+}
+
+message PBMonitorConfig
+{
+	repeated PBMonitorGroup groups = 1; //
+}
+
+// ================== 房间号分段配置 ===============================
+message PBTableGame
+{
+	// [start, end]
+	optional int32 table_type = 1;	// ENTableType
+	optional int32 node_type = 2;	// ENNodeType
+	optional int64 start = 3;
+	optional int64 end = 4;
+}
+
+message PBGameTypeMapConfig
+{
+	repeated PBTableGameType game_type = 1;
+}
+
+message PBTableGameType
+{
+	optional ENTableType table_type = 1;
+	optional ENNodeType node_type = 2;
+	optional ENPlayerPositionType pos_type = 3;
+}
+
+message PBTableZone
+{
+	optional int32 zone_type = 1;	// ENZoneType
+	repeated PBTableGame games = 2;
+}
+
+message PBTableMgrConfig
+{
+	repeated PBTableZone zones = 1;
+	optional bool need_zone_manager = 2; // 是否使用ZoneTableManager
+	optional bool need_common_manager = 3 [default = true]; // 是否使用TableManager
+}
+
+message PBConnectGames
+{
+	optional int32 pos_type = 1;	// ENPlayerPositionType
+	optional int32 node_type = 2;	// ENNodeType
+}
+
+message PBConnectSvrdConfig
+{
+	repeated PBConnectGames games = 1;
+	optional int32 zone_type = 2;
+}
+
+
+message PBRecommendTeaBar
+{
+	optional int64 tbid = 1;//推荐的茶馆ID
+}
+
+message PBTeaBarConfig
+{
+	repeated PBSvrdNode tea_bar_redis = 1;//茶馆redis
+	repeated PBRecommendTeaBar recommend_teabars = 2;//推荐的茶馆
+	repeated PBSvrdNode tea_bar_stat_redis = 3;//茶馆桌子统计redis
+}
+
+message PBActivityItem
+{
+	optional int32 actid = 1;//活动id
+	optional string startYMD = 2;//活动开始年月日
+	optional string endYMD = 3;//活动结束年月日
+	optional string startHMS = 4;//活动开始时分秒
+	optional string endHMS = 5;//活动结束时分秒
+}
+
+message PBActivityRedisConfig
+{
+	optional string ip = 1;
+	optional int32 port = 2;
+}
+
+message PBActivityConfig
+{
+	repeated PBActivityItem activity_item = 1;//活动配置
+	optional PBActivityRedisConfig activity_redis_config = 2;//活动redis配置
+	repeated int32 game_type = 3;
+	optional bool if_use_white_list = 4;//是否使用白名单
+	repeated int32 white_uid_list = 5;//白名单uid列表
+}
+
+message PBHallSvrdConfig 
+{
+	repeated PBSvrdNode records = 1;
+	optional int32 init_money = 2 [default = 100];	
+}
+
+message PBFreeGameConfItem
+{
+	optional int32 ttype = 1;
+	optional PBSDRTableConfig conf = 2;
+}
+
+message PBFreeGameConfig
+{
+	repeated PBFreeGameConfItem items = 1;
+}
+
+message PBTableNodePosConfig
+{
+	optional ENTableType ttype = 1;//桌子类型
+	optional ENNodeType node_type = 2;//节点类型
+	optional ENPlayerPositionType pos_type = 3;//位置类型
+}
+
+message PBActivityGameRoomConfig
+{
+	repeated PBTableNodePosConfig games = 1;
+}
+
+message PBFailedCostRedisConfig
+{
+	optional string ip = 1;
+	optional int32 port = 2;
+}
+
+message PBRobotDetailConfig
+{
+	optional string nick = 1;
+	optional string pic = 2;
+	optional int32 play_num = 3;
+	optional int32 win_num = 4;
+}
+
+message PBRobotConfig
+{
+	repeated PBSvrdNode connect = 1;
+	optional int32 robot_num = 2;
+	repeated PBRobotDetailConfig detail = 3;
+	optional string url = 4;
+}
+
+message PBAutoMatchRoomItem
+{
+	optional int32 ttype = 1;//桌子地区类型
+	optional int32 level = 2;//金币场等级
+	optional int32 base_chip = 3;//底注
+	optional int32 fee = 4;//台费
+	optional int64 chip_floor_limit = 5;//金币下限
+	optional int64 chip_upper_limit = 6;//金币上限
+	optional int32 seat_num = 7;//座位数
+}
+
+message PBAutoMatchRoomConfig
+{
+	repeated PBAutoMatchRoomItem items = 1;
+	repeated PBTableNodePosConfig games = 2;//桌子类型节点位置配置
+}
+
+// ==================================================
+message PBConfig
+{
+    oneof msg_union
+    {
+		PBUserSvrdConfig user_svrd_config =1;
+		PBRouteSvrdConfig route_config = 3;	//子节点的route配置
+		PBGlobalRedisConfig global_redis_config = 4;//全局redis缓存配置
+		PBDBProxySvrdConfig dbproxy_svrd_config = 5;
+		PBLogsvrdConfig logsvrd_config = 6;
+		PBWinScoreConfig  winscore_config= 7;
+		PBCostConfig cost_config = 8;
+		PBMonitorConfig monitor_config = 9;
+		PBTableMgrConfig table_mgr_config = 10;
+		PBConnectSvrdConfig connect_svrd_config = 11;
+		PBTeaBarConfig tea_bar_config = 12;//茶馆配置
+		PBGlobalRedisConfig record_redis_config = 13;//回放redis缓存配置
+		PBActivityConfig activity_config = 14;//活动配置
+		PBConnectSvrdConfig room_svrd_config = 15;
+		PBHallSvrdConfig hall_svrd_config = 16;
+		PBFreeGameConfig free_game_config = 17;
+		PBRobotConfig robot_config = 18;//机器人配置
+		//比赛场
+		PBGameTypeMapConfig game_type_map_config = 100;
+		
+		//闯关
+		PBActivityGameRoomConfig activity_game_room_config = 200;	//闯关配置
+		PBFailedCostRedisConfig failed_cost_redis_config = 201;
+		PBAutoMatchRoomConfig auto_match_room_config = 203;//金币场配置
+    }
+}

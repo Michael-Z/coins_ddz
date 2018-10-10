@@ -1,0 +1,2 @@
+Prefix = TrunkSDR
+CFLAGS += -Wno-invalid-offsetof

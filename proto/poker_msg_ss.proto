@@ -1,0 +1,508 @@
+import "poker_common.proto";
+import "poker_msg_basic.proto";
+import "poker_data.proto";
+//import "poker_msg_cs.proto";
+
+message SSRegistInnerServer
+{
+	optional int32 ntype = 1;	//
+	optional int32 nvid = 2;
+	optional int32 group_id = 3;
+}
+
+message SSNotifyInnerServer
+{
+	optional int32 routeid = 1;
+}
+
+message SSNotifyPlayerHandlerClose
+{
+	optional int64 uid = 1;
+}
+
+message SSNotifyPlayerRepeatedLogin
+{
+	optional int64 uid = 2;
+}
+
+message SSNotifyTableInfo
+{
+	optional PBTableInfo table = 1;
+}
+
+////////////////////////////////////////////////////////
+// 注册登录
+message SSRequestLogin 
+{
+	optional int32	acc_type	= 1;
+	optional string account		= 2;
+	optional string token		= 3;
+}
+
+message SSResponseLogin
+{
+	optional ENMessageError result		= 1;
+	optional PBDataSet		data_set	= 2;
+	optional bool 			is_created	= 3;
+}
+
+message SSRequestAccountUid
+{
+	optional int32	acc_type	= 1;
+	optional string account		= 2;
+	optional string token		= 3;
+	optional bool auto_create	= 4 [default = true];
+}
+
+message SSResponseAccountUid
+{
+	optional ENMessageError result = 1;
+	optional int64 uid = 2;
+	optional bool iscreated = 3[default = false];
+}
+
+message SSRequestRegist
+{
+	optional int32	acc_type	= 1;
+	optional string account		= 2;
+	optional int64	init_money	= 3;
+	optional int32	init_gold	= 4;
+	optional ENGender gender	= 5;
+	optional string pic_url		= 6;
+	optional string nick		= 7;
+	optional int32	channel		= 8;
+}
+
+message SSResponseRegist
+{
+	optional ENMessageError result	= 1;
+	optional int64 uid	= 2;
+}
+
+message SSRequestCreateUid
+{
+}
+
+message SSResponseCreateUid
+{
+	optional ENMessageError result	= 1;
+	optional int64			uid		= 2;
+}
+
+message SSRequestAccBindUid
+{
+	optional int32	acc_type	= 1;
+	optional string account		= 2;
+	optional int64	uid			= 3;
+}
+message SSResponseAccBindUid
+{
+	optional ENMessageError result	= 1;
+}
+
+////////////////////////////////////////////////////////
+// db层读写数据
+message PBRedisData
+{
+	optional int32	key		= 1;
+	optional bytes	buff		= 2; //proto序列化
+	optional bool	result	= 3;
+}
+
+message PBDataSet
+{
+	optional int64			uid			= 1;
+	optional PBUserData		user_data	= 2; //proto解析结果
+	repeated PBRedisData		key_list		= 3;
+}
+
+message SSRequestQueryData
+{
+	optional PBDataSet	data_set	= 1;
+}
+
+message SSResponseQueryData
+{
+	optional PBDataSet	data_set	= 1;
+}
+
+message SSRequestSaveData
+{
+	optional PBDataSet	data_set	= 1;
+}
+
+message SSResponseSaveData
+{
+	optional PBDataSet	data_set	= 1;
+}
+
+////////////////////////////////////////////////////////
+// 逻辑层读写数据
+message SSRequestGetUserData
+{
+	optional PBDataSet	data_set	= 1;
+}
+
+message SSResponseGetUserData
+{
+	optional ENMessageError result		= 1;
+	optional PBDataSet		data_set	= 2;
+}
+
+//茶馆金流
+message TeaBarChipsFlow
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int32 chips = 2;//房卡
+	optional int32 reason = 3;//原因
+}
+
+message TeaBarWaitTableData
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int32 wait_table_num = 2;//等待开局桌子数
+}
+
+message TeaBarPayTypeData
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int32 pay_type = 2;//支付方式
+}
+
+message PBDBAtomicField
+{
+	optional int32				field		= 1;
+	optional ENUpdateStrategy	strategy	= 2;
+	optional string				strvalue	= 3;
+	optional int64				intval		= 4;
+	optional PBBPlayerPositionInfo pos = 5;
+	optional int32				reason		= 6;
+	optional PBGameRecord		record		= 7;
+	optional PBTableConfig 		conf		= 8;
+	optional PBFpfTableConfig 	fpf_conf = 9; // 放炮罚桌子配置
+	optional PBDelegateTableInfo tableinfo = 10; //代开房间信息
+	optional PBDSSTableConfig 	dss_conf = 11; // 斗十四桌子配置
+	optional TeaBarBriefData	tea_bar_brief = 12;//茶馆简要信息
+	optional TeaBarChipsFlow  tea_bar_chips_flow = 13;//茶馆金流
+	optional TeaBarWaitTableData tea_bar_wait_table_data = 14;//茶馆等待开具桌子数
+	optional TeaBarPayTypeData tea_bar_pay_type_data = 15;//茶馆支付方式
+
+	optional PBSDRTableConfig 	sdr_conf = 16;
+	optional string 	 		items_info	= 17; 		//玩家物品信息
+
+	optional int64	skipmatch_session_id	= 18;	//匹配的sessionid
+	optional float 	floatval 				= 19;
+	optional int32 	game_type				= 20;	//匹配的游戏类型
+	optional int32  activity_type			= 21;	//活动游戏服类型
+	optional int32  skipmatch_need_share_num	= 22;	//闯关需要的分享次数
+	optional int32 	skipmatch_need_diamond_num	= 23;	//闯关需要的砖石数目
+	optional bool 	lately_session_has_win_or_lose	= 24[default = true];	//最近这场比赛是否有输赢
+}
+
+message PBUpdateData
+{
+	optional int32				key			= 1;
+	repeated PBDBAtomicField	field_list	= 2;
+}
+
+message SSRequestUpdateUserData
+{
+	optional int64				uid			= 1;
+	repeated PBUpdateData		key_list	= 2;
+}
+
+message SSResponseUpdateUserData
+{
+	optional ENMessageError result			= 1;
+	optional PBUserData		user_data		= 2;
+	optional int64 uid = 3;
+}
+
+message SSNotifyPlayerPosChange
+{
+	optional PBBPlayerPositionInfo pos = 1;
+}
+
+message SSInnerReportGameRecord
+{
+	optional PBGameRecord game_record = 1; 
+}
+
+message SSReportGameSvrdInfo
+{
+	optional int32 gtype = 1;
+	optional int32 gameid = 2;
+	repeated int64 tablelist = 3;
+}
+
+message SSNotifyRoomSvrd
+{
+}
+
+message SSNotifyGameSvrdClosed
+{
+	optional int32 gtype = 1;
+	optional int32 gameid = 2;
+}
+
+message SSNotifyGameSvrdRetire
+{
+	optional int32 gtype = 1;
+	optional int32 gameid = 2;
+}
+
+message SSNotifyTableDissolved
+{
+	optional int64 tid = 1;
+	optional int32 game_type = 2;
+}
+
+message SSInnerDissolveTable
+{
+	optional int64 tid = 1;
+	optional bool auto_dissolve = 2;
+}
+
+message SSRequestUpdateRankList
+{
+	optional int32 rank_id		= 1;
+	optional int64 rank_key		= 2;
+	optional int64 rank_score	= 3;
+}
+
+message SSInnerOnDelegateTableGameOver
+{
+	optional PBTableConfig conf = 1; //
+	optional int32 current_round = 2;
+	optional PBTableStatistics statistics = 3;
+	optional int64 tid = 4;
+	optional int32 state = 5;
+}
+
+message SSInnerOnDelegateTableGameStart
+{
+	optional PBTableConfig conf = 1; //
+	optional int64 tid = 4;
+}
+
+message SSInnerNotifyAutoReleaseTable
+{
+	optional int64 tid = 1;
+}
+
+message GMUpdateList
+{
+	optional int64		uid			= 1;
+	optional int64		chips	= 2;
+	optional int32		reason		= 3;
+}
+
+message GMUpdateChipsMulti
+{
+	repeated GMUpdateList	need_del_list	= 1;
+	repeated GMUpdateList	update_list		= 2;
+}
+
+message GMPushMessageMulti
+{
+	repeated int64 uid_list = 1;
+	optional string message = 2;
+	optional bool all = 3;
+}
+
+message SSInnerAutoQihu
+{
+	optional int64 tid = 1;
+	optional int64 uid = 2;
+}
+
+//茶馆桌子游戏开始
+message SSNotifyTeaBarTableGameStart
+{
+	optional PBSDRTableConfig conf = 1; //
+	optional int64 tid = 2;
+}
+
+//茶馆桌子游戏结束
+message SSNotifyTeaBarTableGameOver
+{
+	optional PBSDRTableConfig conf = 1; //
+	optional PBTableStatistics statistics = 2;
+	optional int64 tid = 3;
+	optional int64 owner_uid = 4;
+}
+
+//刷新茶馆桌子人数
+message SSNotifyTeaBarTablePlayerNum
+{
+	optional PBSDRTableConfig conf = 1; //
+	optional int64 tid = 2;
+	optional int32 player_num = 3;
+}
+
+//通知茶馆桌子不存在
+message SSNotifyTeaBarTableNotExist
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int64 tid = 2;//桌子ID
+}
+
+message SSNotifyCreateTable
+{
+	optional int64 uid = 1;
+	optional int64 tid = 2;
+	optional PBSDRTableConfig conf = 3;
+}
+//转让茶馆
+message SSRequestTransferTeaBar
+{
+	optional int64 old_master_uid = 1;//茶馆老主人id
+	optional int64 new_master_uid = 2;//茶馆新主人id
+}
+
+// 获取牌桌日志
+message SSRequestTableLog
+{
+	optional int64 tid = 1;
+}
+message SSResponseTableLog
+{
+	optional string table_log = 1;
+	optional string table_data = 2;
+}
+// 解散牌桌
+message SSRequestDissolveTable
+{
+	optional int64 tid = 1;
+}
+message SSResponseDissolveTable
+{
+	optional string result = 1;
+}
+
+//用于超时解散时，房主状态的清空
+message SSInnerNotifyClearTableOwnerTableInfo
+{
+	optional int64 i64_uid = 1;
+}
+
+//向room服请求座位数据
+message SSRequestTableInfo
+{
+	optional int64 i64_tid = 1;
+	optional int32 i_pos_type = 2;
+	optional int32 i_game_svid_id = 3;
+}
+
+//返回座位数据
+message SSResponseTableInfo
+{
+	optional int32 i_ret = 1;
+	optional PBSDRTableConfig pb_config = 2;
+}
+
+message SSInnerNotifyLogoutTable
+{
+	optional int64 tid = 1;
+	optional int32 ttype = 2;
+	optional int32 num = 3;
+}
+
+message SSInnerKickOutPlayer
+{
+	optional int64 tid = 1;
+	optional int64 uid = 2;
+}
+
+//查询茶馆用户列表
+message GMRequestQueryTeaBarUserList
+{
+	optional int64 tbid = 1;	//茶馆id
+}
+
+message GMResponseQueryTeaBarUserList
+{
+	optional ENMessageError result = 1; 
+	repeated int64 uids = 2;		//玩家id
+}
+
+//通知闯关user的信息
+message SSInnerUpdateSkipMatchResult
+{
+	optional int64 tid = 1;			//桌子id
+}
+
+//通知闯关后的结果（db用）
+message SSUpdateDBSkipMatchResult
+{
+	optional int64 uid = 1;						//用户的account id
+	optional int64 skip_match_session_id = 2;	//本次对局的session-id
+	optional int32 skipmatch_level_change_val = 3;			//等级改变后的值
+	optional int32 skipmatch_level = 4;			//等级
+	optional int32 skipmatch_state = 5;			//等级状态改变后的值
+	optional int64 bonus_change_val = 6;		//奖金改变
+	optional int32 reason = 7;					//原因
+}
+
+message SSNotifyPlayerSkipMatchPosChange
+{
+	optional PBBPlayerPositionInfo pos = 1;
+}
+
+//gm修改用户活动游戏数据
+message GMRequestEditUserActivityGameInfo
+{
+	optional int64 uid = 1;
+	optional int32 game_type = 2;
+	optional int32 activity_type = 3;
+	repeated PBUpdateData update = 4;
+}
+
+message GMResponseEditUserActivityGameInfo
+{
+	optional int32 result = 1;	
+	optional PBUserGameData user_game_data_after_edit = 2;	//改变之后的的用户值
+}
+
+message GMRequestNotifyShareSuccess
+{
+	optional int64 uid = 1;
+	optional int32 game_type = 2;
+	optional int32 activity_type = 3;
+	optional int64 session_id = 4;
+}
+
+message GMResponseNotifyShareSuccess
+{
+	optional int32 result = 1;
+	optional PBUserGameData user_game_data_after_edit = 2;	//改变之后的的用户值
+}
+
+//机器人加入比赛
+message SSRequestRobotJoinMatch
+{
+	optional int64 matchid 								= 1;
+	optional int32 robot_num 							= 2;
+	optional PBSourceInfoRequestingRobot source_info 	= 3;	//请求源信息
+}
+
+//请求机器人源信息（需要用什么自己填）
+message PBSourceInfoRequestingRobot
+{
+	optional int32 activity_type 	= 1;	//那种活动类型的游戏（比如 闯关）
+	optional int32 game_type 		= 2;	//哪个游戏需要这个机器人（比如 斗地主）
+	optional int32 level			= 3;	//金币场等级
+}
+
+//通知结果信息（通用）
+message SSInnerUpdateMatchResult
+{
+	optional int64 tid = 1;			//桌子id
+}
+
+//踢出用户
+message SSInnerNotifyKickoutUser
+{
+	optional int64 tid = 1;
+	repeated int32 indexs = 2;
+}

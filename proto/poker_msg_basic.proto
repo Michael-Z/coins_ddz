@@ -1,0 +1,1174 @@
+//基础数据结构
+import "poker_common.proto";
+import "poker_data.proto";
+//import "poker_config.proto";
+
+message PBAccount
+{
+	optional string account = 1;
+	optional int64 uid = 2;
+}
+
+message PBGameUser
+{
+	optional int64 tid = 1;
+	optional PBUser user = 2;
+}
+
+message PBTableUser
+{
+	optional int64 uid = 1;
+	optional string nick = 2; //玩家昵称
+    optional string role_picture_url = 3;
+    optional int32 gender = 4; //男:1 女:0
+	optional bool is_offline = 5 [default = false];
+	optional int32 offline_stamp = 6;
+	optional int32 acc_type = 7;
+    optional int32 vip_level = 8;
+    optional int32 channel  = 9;
+	optional string last_login_ip = 10;
+	optional int32 connect_id = 11;
+	optional int64 chip = 12;
+	optional bool is_backend = 13;
+	optional int32 enter_table_stamp = 14;
+	optional string items_info = 15;
+	optional int64 diamond								= 16;//钻石
+	optional int32 skipmatch_level 						= 17[default = 1];	//闯关的等级（应该进入哪个等级的）
+	optional int32 skipmatch_state 						= 18;//闯关的状态
+	optional float bonus 								= 19;//奖金	
+	optional int32 skipmatch_success_skip_level_num 	= 20;//成功向上跳级的次数（比如1级跳2级）
+	optional int32 skipmatch_game_num 					= 21;//一共游戏的次数
+	optional int32 skipmatch_total_win_num_on_type 		= 22;//通关次数（通完7关的）
+	optional float total_bonus							= 23;//总的通关数
+	optional bool is_robot 								= 24;//是否是机器人
+	optional int32 coins								= 25;//金币
+}
+
+message PBMJMeld //组 顺子 刻子 或者杠子
+{
+	optional int32 atype = 1;
+	repeated int32 tiles = 2;
+	optional int32 real_tile = 3;
+	optional bool intercept = 4 [default = false];
+	optional bool act_after_gang = 5[default = false]; //杠后操作 杠后摸牌 杠后打牌
+	optional bool expect = 6 [default = false]; //预操作
+	optional bool is_penggang = 7 [default = false]; //碰杠
+}
+
+message PBMJAction
+{
+	optional int64 tid = 1;
+	optional int32 seatid = 2;
+	optional PBMJMeld meld = 3;
+}
+
+message PBMJActionFlow
+{
+	optional int32 flowtoken = 1;
+	optional PBMJAction action = 2;
+}
+
+message PBMJActionChoice
+{
+	optional int32 maxlevel = 1; //操作优先级
+	optional bool isdetermine = 2; //是否做了操作
+	optional bool istp = 3; //玩家是否听牌
+	optional PBMJAction determined_action = 4; //玩家做的操作
+	optional PBMJAction default_action = 5; //默认操作
+	repeated PBMJAction choices = 6; //可选择的操作
+	optional int32 determined_level = 7; //
+}
+
+message PBSeatWinInfo
+{
+	optional int32 score = 1; //番数
+	optional int32 root = 2;//归数
+	optional bool ispair = 3;//7对
+	optional bool isbigpair = 4;//大对子
+	optional bool win_after_gang = 5; //杠上开花
+	optional bool win_after_other_gang = 6; //杠上炮
+	optional bool isuniform = 7;//清一色
+	optional bool isqianggang = 8;
+	optional int32 win = 9;
+	optional int32 lose = 10;
+	optional bool is_chadajiao = 11[default = false];
+	optional bool is_huamao = 12;
+}
+
+message PBTableSeat
+{
+	optional PBTableUser   	 user         	= 1;//座位上的玩家信息
+	optional ENSeatState     state          = 2; // 座位状态
+    optional int32          index          	= 3; // 座位索引
+	repeated PBMJActionFlow	action_flows	= 4; //action flow vect of the seat
+	optional PBMJActionChoice	action_choice	= 5; //action choice data
+	repeated int32 tiles_on_hand = 6; //
+	repeated PBMJMeld out_meld = 7; // 打出去的组(吃碰杠等)
+	repeated int32 flowers = 8; //花牌
+	repeated int32 disable_tiles = 9; //禁止牌
+	optional bool disable_hupai = 10; //禁止胡牌
+	optional PBMJActionFlow win_action_flow = 11; //胡的牌
+	optional PBSeatWinInfo win_info = 12; //胡牌信息
+	optional int32 final_score = 13;
+	optional int32 action_token = 14;
+	optional int32 jokernum = 15;
+	optional int32 baopai_state = 16; //EN_SEAT_BP_STATE
+	optional bool kill_other_bp_state = 17;
+	optional int32 disable_hupai_times = 18; //过水番数
+}
+
+message PBDissolveInfo
+{
+	optional int64 start_uid = 1;
+	repeated int64 agree_uid_list = 2;
+	optional ENTableState pre_state = 3; //请求之前桌子的状态
+}
+
+message PBGameTable
+{
+	optional int64 tid = 1;
+	repeated PBTableSeat   seats 			= 2;  // 座位信息
+	optional int32 dealer_wind = 3; //门风(自风)
+	optional int32 prevailing_wind = 4; //场风(场风)
+	optional int32 deal_index = 5;
+	optional PBTableConfig config = 6;
+	repeated PBMJActionFlow total_action_flows = 7;
+	repeated PBMJActionFlow xun_flows = 8; //
+	repeated int32 tiles = 9; //
+	optional ENTableState state = 10;
+	optional int64 owner = 11;
+	optional int32 round = 12;
+	optional PBGameRecord record = 13;
+	optional PBDissolveInfo dissolve_info = 14;
+	optional bool has_winner = 15;
+	optional int32 next_dealer = 16;
+	repeated PBTableUser observers = 17; 
+}
+
+message PBTableInfo
+{
+	optional ENTableType ttype = 1;
+	optional string name = 2;
+	optional int64 tid = 3;
+	optional int32 game_svid = 4;
+}
+
+message PBSession
+{
+	optional int32 sessionid = 1;		//本地的session id
+	optional int32 msgtype = 2;
+	optional int32 magic = 3;			//session校验码.防止串号.
+	optional int32 create_stamp = 4;	//session 的创建时间.用于检测泄漏.
+	optional int32 request_sessionid = 5;//请求的session id
+	optional int64 single_uid = 6;
+	optional int64 request_cmd = 8;
+    optional bool  need_unlock = 9;
+}
+
+// =============================== 放炮罚 ====================================
+message PBFPFGameTable
+{
+	optional int64 tid = 1;
+	repeated PBFPFTableSeat seats = 2;  // 座位信息
+	optional int32 dijia_index = 3; // 底家
+	
+	optional int32 deal_index = 5;
+	optional PBFpfTableConfig config = 6;
+	optional ENTableState state = 10;
+	optional int64 creator_uid = 11; // 房主
+	optional int32 round = 12;
+	optional PBGameRecord record = 13;			// 游戏记录
+	optional PBDissolveInfo dissolve_info = 14;	// 房间解散信息
+	repeated int32 cards = 9; // 牌堆
+	optional int32 operation_index = 24;	// 当前操作玩家
+	optional int32 quan_card = 28;	// 圈牌
+	
+	repeated PBFPFActionFlow total_action_flows = 7;
+	repeated PBFPFActionFlow replay_action_flows = 8;	// 回放action_flows
+	optional PBFPFActionChoice max_pre_choice = 21;	// 预操作的最高优先级操作
+	
+	optional int32 common_card = 20;		// 公共牌 缓存每次拿的牌
+	optional int32 last_winner = 22; 	// 上把赢家
+	optional bool	can_bai_long = 25;	// 是否可以摆龙
+	optional bool is_game_over = 26;	// 是否游戏已结束
+	optional bool is_dissolve_finish = 27;	// 是否解散结束
+}
+
+message PBFPFTableSeat
+{
+	optional PBTableUser 	user = 1; //座位上的玩家信息
+	optional ENSeatState 	state = 2; // 座位状态
+    optional int32 		index = 3; // 座位索引
+	optional bool 			is_chong_zhao = 4;	// 是否处于冲招状态
+	optional bool 			is_abandon_hu = 6;	// 是否弃胡
+	optional bool 			can_qihu = 8;		// 是否可以弃胡
+	optional int32			sort_index = 9;		// 四人玩法专用
+	
+	repeated int32			pass_cards_chi = 15; // 吃过张列表
+	repeated int32			pass_cards_peng = 19; // 碰过张列表
+	repeated int32			hand_cards = 16;	// 手牌
+	repeated int32			out_cards = 17; // 出牌列表 自己打出去的和自己摸了没人要的
+	optional int32			total_score = 18; // 累计胡息
+	optional int32 		final_score = 13;	 // 本局胡息
+	optional bool 			need_auto_qihu = 40;	//  是否需要自动弃胡
+	optional int32 			hu_xi = 26;	// 胡息
+	optional int32 			multiple = 27;	// 番数
+	optional bool 			has_bao_pai = 28;	// 是否已报牌
+	optional bool 			can_hu_heibai = 29;	// 是否可胡黑摆
+	optional bool 			can_hu_3long4kan = 30;	// 是否可胡三垅四坎
+	optional bool 			need_double = 31;	// 是否需要加番胡牌
+	optional bool 			need_chibaozi = 32;	// 是否吃包子
+	optional int32 			need_multiple = 33;	// 三招当前番数
+	optional bool 			can_hu_3zhao = 34;	// 是否可胡三招
+	repeated int32			jiao_cards = 35;	// 叫牌列表
+	optional int32			score_fangpao = 36;	// 放炮弃胡时的分数
+	optional bool 			qihu_jinzhang = 37;	// 弃胡进张
+	optional bool 			can_hu = 38;	// 牌型可胡牌
+	optional bool 			need_recheck_bao_pai = 39; // 需要二次报牌
+	optional PBFPFActionChoice 	tmp_action_choice = 41; // 二次报牌专用
+	optional bool 			is_bao_pai_on_start = 42; 	// 是否起手报牌
+
+	
+	optional PBFPFActionChoice	action_choice	= 5; //action choice data
+	repeated PBColumnInfo 		out_col = 7; // 打出去的组(吃碰杠等)
+	
+	optional PBFPFActionFlow win_action_flow = 11; //胡的牌
+	optional PBFPFSeatWinInfo win_info = 12; //胡牌信息
+	
+	optional int32 action_token = 14;
+	repeated PBColumnInfo winner_col_info = 23;	// 胡牌玩家的手牌组合
+	// 二次名堂分析临时缓存
+	repeated PBColumnInfo 	re_winner_col_info = 24;	// 胡牌玩家的手牌组合
+	optional int32 		re_final_score = 25;	 	// 本局胡息
+	optional int32		re_final_dest_card = 43;	// 最大胡息胡牌的目标牌
+}
+
+message PBFPFSeatWinInfo
+{
+	optional bool is_zimo = 1;			// 是否为自摸
+	optional bool is_fangpaohu = 2;		// 是否为放炮胡
+	optional int32 fangpao_index = 3;	// 放炮玩家座位号
+	repeated ENFPFStyleType styles = 4;	// 花样 名堂
+	repeated int32 desc = 5;			// 花样对应的描述 1->100胡息 2->x2 给客户端展示用
+}
+
+// 一列牌 或 一方门子
+message PBColumnInfo
+{
+	repeated int32 cards = 1;
+	optional ENFPFColType col_type = 2;	// 一提 一坎 一句话 一绞
+	optional bool can_raise = 3; // 是否可以升息 偎牌可以继续跑或者提而升息
+	optional int32 an_num = 4;	// 展示暗牌数量
+	optional int32 score = 5; // 胡息
+	repeated PBColumnInfo sub_col_info = 6;
+	optional int32 dest_card = 7;	// 目标牌
+	optional int32 dest_index = 8 [default = -1];	// 目标牌来自的座位号
+}
+
+message PBFPFAction
+{
+	optional int64 tid = 1;
+	optional int32 seat_index = 2;
+	optional ENFPFActionType act_type = 3;	// 操作类型
+	optional int32 dest_card = 4; 			// 目标牌
+	optional PBColumnInfo col_info = 5;		// 列组合
+	optional bool need_bi_pai = 7;	// 是否需要比牌
+	optional int32 left_card_num = 8;	// 剩余底牌数量
+	optional int32 dest_index = 9;	// 目标牌来自的座位号
+	repeated int32 jiao_cards = 10;	// 叫牌列表
+}
+
+message PBFPFActionFlow
+{
+	optional int32 flow_token = 1;
+	optional PBFPFAction action = 2;
+}
+
+message PBFPFActionChoice
+{
+	optional int32 max_level = 1; //操作优先级
+	optional bool is_determine = 2; //是否做了操作
+	optional PBFPFAction determined_action = 4; //玩家做的操作
+	//optional PBFPFAction default_action = 5; //默认操作
+	repeated PBFPFAction choices = 6; //可选择的操作
+	optional int32 determined_level = 7; //
+}
+
+message CSHandCardsInfo
+{
+	optional int64 uid = 1;
+	repeated int32 hand_cards = 2;
+	repeated int32 real_hand_cards = 3;	// 替换财神后的手牌
+}
+
+message CSFPFResult
+{
+	optional int32 winner_index = 1;	// 赢家座位号  -1表示黄庄
+	optional int32 total_score = 2;	// 累计胡息
+	optional int32 single_score = 3;	// 本局胡息
+	repeated PBColumnInfo col_info_lsit = 4;	// 赢家胡牌牌型
+	repeated int32 cards = 5;	// 剩余底牌
+	optional PBFPFSeatWinInfo win_info = 6; //胡牌信息
+	optional int32 dest_card = 7;	// 胡的目标牌
+	optional bool is_finished = 8; 	// 是否牌局已结束
+	// 其余两家的剩余手牌
+	repeated CSHandCardsInfo hand_cards_info = 9;
+}
+
+message CSPlayerInfo
+{
+	optional int64 uid = 1;
+	optional int32 hu_xi = 2;	// 胡息
+	optional int32 multiple = 3;	// 番数
+	repeated PBColumnInfo col_info_lsit = 4;	// 赢家胡牌牌型
+	optional PBFPFSeatWinInfo win_info = 5; //胡牌信息
+	optional int32 dest_card = 6;	// 胡的目标牌
+	optional int32 score = 9;	// 本局积分
+	optional bool is_fangpao = 10;	// 是否放炮
+	optional bool is_chibaozi = 11;		// 是否吃包子
+
+	optional CSHandCardsInfo hand_cards_info = 7;
+	repeated PBColumnInfo out_cols = 8;	// 桌面组合
+	repeated PBDSSColumnInfo dss_out_cols = 12;	// 桌面组合
+}
+message CSDaerResult
+{
+	optional int32 winner_index = 1;	// 赢家座位号  -1表示黄庄
+	repeated int32 cards = 2;	// 剩余底牌
+	optional bool is_finished = 3; 	// 是否牌局已结束
+	repeated CSPlayerInfo players = 4;
+}
+
+message CSDssPlayerInfo
+{
+	optional int64 uid = 1;
+	optional int32 multiple = 2;	// 番数
+	optional int32 dest_card = 3;	// 胡的目标牌
+	optional int32 score = 4;	// 本局积分
+	optional CSHandCardsInfo hand_cards_info = 5;
+	repeated PBDSSColumnInfo out_cols = 6;	// 桌面组合
+	optional bool is_fangpao = 7;	// 是否放炮
+	optional bool is_bao_pai =8;	//是否报牌
+	optional bool is_piao 		=9;	//是否飘
+	optional bool is_tian_hu	=10;	//是否天胡
+	optional bool is_gan_bian_wan =11;	//是否是赶边弯
+	optional bool  is_di_bao = 12; //是否地报 ccc DY
+	optional int32 basic_score  = 13;	// 基础分数
+	optional bool  is_red_hu = 14; // 是否红胡
+	optional bool  is_black_hu = 15; // 是否黑胡
+	optional bool  is_haidi = 16; // 是否海底
+	optional bool  is_tou_hu = 17; // 是否偷胡
+	optional bool  is_zimo = 18; // 是否自摸
+	optional bool  is_18_lan = 19; // 是否十八烂
+
+	repeated PBDSSColumnInfo an_2_col_on_hand = 20;
+	optional bool  is_jin_20 = 21 ;//金20
+	optional bool  is_quan_hong_quan_hei = 22 ; //全红全黑
+	optional int32 hu_xi = 23;  //胡息，点数
+	optional bool 	kan_fan = 24;
+	optional bool 	dai_gou_fan = 25;
+	optional bool 	wang_pai_fan = 26;
+	optional bool is_chibaozi = 27;		// 是否吃包子
+	optional int32	piao_score = 28; // 漂分
+	optional bool 	xiao_qi_dui = 29;
+	optional bool 	is_sha_bao = 30;
+	optional bool   is_weisigen = 31; //喂4根
+	optional bool 	is_che_pao = 32; //扯炮
+	optional bool   is_si_gen_tou = 33; //四跟头
+	optional bool   is_duizihu = 34; //对子胡
+	optional bool   is_longdui = 35; //龙队
+	optional bool   is_su_hu = 36; // 阿坝 素胡
+	optional bool   is_qian_hu = 37; // 阿坝 千胡
+	optional bool   is_qiangganghu = 38; //抢杠胡
+	
+}
+
+message CSSdrPlayerInfo
+{
+	optional int64 uid = 1;
+	optional int32 multiple = 2;	// 番数
+	optional int32 dest_card = 3;	// 胡的目标牌
+	optional int32 score = 4;	// 本局积分
+	optional CSHandCardsInfo hand_cards_info = 5;
+	repeated PBSDRColumnInfo out_cols = 6;	// 桌面组合
+	optional bool is_fangpao = 7;	// 是否放炮
+	optional int32 hu_num = 8;	// 胡数
+	optional int32 qiang_num = 9;	// 枪数
+	repeated PBSDRColumnInfo col_info_lsit = 10;	// 赢家胡牌牌型
+	optional PBSDRSeatWinInfo win_info = 11; //胡牌信息
+	optional bool is_piao = 12;	//利川_飘
+	optional int32 disable_4_times = 13;	//zhua_num
+	optional int32 piao_score = 14;	// 来凤 漂分
+	optional int32 bomb_num = 15;	// 炸弹数量
+	optional int32 double_times = 16;	// 加倍次数
+	optional int32 soft_bomb_num = 17;	// 软炸弹数量
+	repeated PBSDRBoomCardColInfo	boom_info = 18;	//出过得炸弹 
+	optional int32 hao_hua_num = 19;	// 豪华数量
+	optional int32 chu_score = 20;	// 出的分数
+	optional int32 lai_zi_num = 21;	// 癞子数
+	optional int32 pi_zi_num = 22;	// 痞子数
+	optional int32 an_gang_num = 23;
+	optional int32 peng_gang_num = 24;
+	optional int32 bao_gang_num = 25;
+	optional int32 dian_gang_num = 26;
+}
+
+message CSDssResult
+{
+	optional int32 winner_index = 1;	// 赢家座位号  -1表示黄庄
+	optional bool is_finished = 3; 	// 是否牌局已结束
+	repeated CSDssPlayerInfo players = 4;
+}
+
+message CSSdrResult
+{
+	optional int32 winner_index = 1;	// 赢家座位号  -1表示黄庄
+	repeated int32 cards = 2;	// 剩余底牌
+	optional bool is_finished = 3; 	// 是否牌局已结束
+	repeated CSSdrPlayerInfo players = 4;
+	optional int32 jiang_card = 5; 	// 将牌
+	optional int32 bomb_num = 6;	// 炸弹数量
+	optional int32 soft_bomb_num = 7;	// 软炸弹数量
+}
+
+message CSNotifyGameOver
+{
+	repeated PBTableSeat seats = 1;
+	repeated PBUserScoreInfo final_user_scores = 2;
+	// fpf
+	optional CSFPFResult fpf_result = 3;
+	// daer
+	optional CSDaerResult daer_result = 4;
+	// dss
+	optional CSDssResult dss_result = 5;
+	// sdr
+	optional CSSdrResult sdr_result = 6;
+}
+
+message PBLZMJTableFlowRecordItem
+{
+	optional int64 tid = 1; //桌子id
+	optional PBTableConfig conf = 2; //牌桌配置
+	repeated PBTableSeat seats = 3; //座位信息 (记录初始牌 玩家信息)
+	repeated PBMJActionFlow total_action_flows = 4;
+	optional int32 deal_index = 5;
+	
+	repeated PBFPFActionFlow fpf_total_action_flows = 6;
+	optional PBFpfTableConfig fpf_conf = 7; //牌桌配置
+	repeated PBFPFTableSeat fpf_seats = 8; //座位信息 (记录初始牌 玩家信息)
+	optional CSNotifyGameOver game_over = 9;
+	optional int64 owner_uid = 10;
+	optional int32 quan_card = 11;	// 圈牌
+}
+
+message PBHashDataField
+{
+	oneof kv_union
+	{
+		PBLZMJTableFlowRecordItem lzmj_table_flow_record_item = 1;
+		PBDSSTableFlowRecordItem dss_table_flow_record_item = 2;
+		PBTeaBarData tea_bar_data = 3;//茶馆数据
+		PBTeaBarTableDetailStatistics tea_bar_table_detail_statistics = 4;//茶馆牌桌详细统计
+		PBSDRTableFlowRecordItem sdr_table_flow_record_item = 5;
+	}
+}
+
+
+// =============================== 斗十四 ====================================
+message PBDSSGameTable
+{
+	optional int64 tid = 1;
+	repeated PBDSSTableSeat seats = 2;  // 座位信息
+	
+	optional int32 dealer_index = 5;
+	optional PBDSSTableConfig config = 6;
+	optional ENTableState state = 10;
+	optional int64 creator_uid = 11; // 房主
+	optional int32 round = 12;
+	optional PBGameRecord record = 13;			// 游戏记录
+	optional PBDissolveInfo dissolve_info = 14;	// 房间解散信息
+	repeated int32 cards = 9; // 牌堆
+	optional int32 operation_index = 24;	// 当前操作玩家
+	optional int32 xiaojia_index = 4; // 小家
+	optional int32 dealer_index_2 = 15; 	// 四人玩法专用，记录滑庄
+	
+	repeated PBDSSActionFlow total_action_flows = 7;
+	repeated PBDSSActionFlow replay_action_flows = 8;	// 回放action_flows
+	optional PBDSSActionChoice max_pre_choice = 21;	// 预操作的最高优先级操作
+	
+	optional int32 common_card = 20;		// 公共牌 缓存每次拿的牌
+	optional int32 last_winner = 22; 	// 上把赢家
+	optional bool is_game_over = 26;	// 是否游戏已结束
+	optional bool is_dissolve_finish = 27;	// 是否解散结束
+
+	optional bool display_anpai = 28;
+	//repeated PBDSSActionFlow delay_action_flows = 29;	// 需要延迟的操作流
+	//optional int32 need_tuo_index = 30;	// 需要妥的操作在流中的索引
+	repeated int32 need_tuo_index = 30;	// 需要妥的操作在流中的索引
+	optional int32 already_na_card_num = 31;		// 已经翻开的牌(只能地爆用) ccc DY
+	optional bool is_able_dihu = 32;	// 是否能地胡
+	repeated int32 out_cards = 33; // 出牌列表
+}
+
+message PBDSSTableSeat
+{
+	optional PBTableUser 	user = 1; //座位上的玩家信息
+	optional ENSeatState 	state = 2; // 座位状态
+    optional int32 			index = 3; // 座位索引
+	
+	repeated int32			hand_cards = 10;	// 手牌
+	repeated int32			out_cards = 11; // 出牌列表 自己打出去的和自己摸了没人要的
+	optional int32			total_score = 12; // 累计胡息
+	optional int32 			final_score = 13;	 // 本局胡息
+	optional int32 			hu_xi = 14;	// 胡息
+	optional int32 			multiple = 15;	// 番数
+	optional PBDSSActionChoice	action_choice = 16; //action choice data
+	repeated PBDSSColumnInfo 	out_col = 17; // 打出去的组(吃碰杠等)
+	optional PBDSSSeatWinInfo 	win_info = 18; //胡牌信息
+	optional int32 			action_token = 19;
+	repeated PBDSSColumnInfo 	winner_col_info = 20;	// 胡牌玩家的手牌组合
+	optional bool 			can_peng_tuo = 21;	// 碰后妥牌
+	optional bool 			need_check_caishen = 22;	// 暗牌结算 是否需要检测财神
+	optional bool 			need_check_anpai = 23;		// 暗牌结算 是否需要检测暗牌
+	
+	repeated PBDSSTableSeatBanedCards	baned_cards = 24;	// 玩家不能出的牌 liu
+	optional int32			change_card = 25;			// 小家换的牌，本次出牌不可以 liu
+	repeated int32			Pass_Peng_card = 26;				// 过碰之后，别人摸/出的不能碰，自己偷的必须碰
+
+
+	// 二次名堂分析临时缓存
+	repeated PBDSSColumnInfo 	re_winner_col_info = 27;	// 胡牌玩家的手牌组合
+	optional int32 		re_final_score = 28;	 	// 本局胡息
+	optional int32		re_final_dest_card = 43;	// 最大胡息胡牌的目标牌
+	optional int32		pre_chu_card = 29;	// 预出牌
+	optional bool 			need_tou_twice = 35;	// 是否需要偷牌两次 liu
+	repeated int32			pass_gang = 36;	// 过杠的牌 liu
+	optional bool			need_bao_pai = 37; // 是否需要报牌 liu
+	repeated int32			baopai_card = 38; // 报过的牌 liu
+	optional bool			is_pass_hu = 39; // 是否处理过胡状态 liu
+	optional bool 			is_piao=30;        //定飘
+	optional bool 			is_bao_pai=31;		//报牌
+	optional bool 			is_tian_hu =32;		//天胡 zhuke ccc DY
+	optional bool 			is_gan_bian_wan =33;	//赶边弯 zhuke
+	optional bool 			is_di_bao = 34; //是否地报 ccc DY
+	optional PBDSSActionPassInfo pass_info = 40;//过牌的信息
+	optional PBDSSActionShouInfo shou_info = 41;//收牌的信息
+	optional bool 			pre_is_hu_and_piao = 42[default = false]; //上一把是否胡且飘 ccc Jy
+	repeated int32			disable_chupai  =44;		//不能出的牌
+	repeated int32			pass_cards    =45;		//已经过的牌（已经招了）
+	optional bool 			disable_hupai  = 46;    	//过胡
+	repeated int32			you_hua_shuo_cards  =47 ;	//有话说的牌
+	optional int32 			basic_score = 48;	 	// 基础分数
+	repeated int32 			disable_hupai_card =49; //过胡的牌
+
+	optional bool 			has_piao = 50;		// 玩家是否选过漂
+	
+	repeated PBDSSAnKouInfo an_kou_info = 51;//暗扣信息
+	optional int32			disable_hupai_multiple = 52;//查叫用
+	optional int32			piao_score = 53;	// 漂分 1-5分，只能加，不能减
+	optional bool			has_kou_pai = 54;	// 是否已扣牌
+	optional bool 			is_first_in = 55;		// 玩家是否是第一次进张
+	optional int32          ask_tou_whith_total_num = 56;//安岳判断偷牌次数
+	optional int32			gang_score = 57;	// 杠分
+	optional bool			need_chibaozi = 58;	// 是否吃包子
+
+	repeated PBDSSColumnInfo 	an_2_col_on_hand = 59; //不放下手的暗牌
+	optional bool 			need_kou_pai = 60;	// 需要扣牌
+	optional int32			kou_pai_deadline = 61;	// 扣牌结束时间
+	optional int32			last_real_mao = 62;	// 偷牌之前的实际卯数
+	optional int32			gang_score_add = 63;	// 杠分+
+	optional int32			gang_score_sub = 64;	// 杠分-
+}
+
+message PBDSSActionPassInfo
+{
+	repeated PBDSSActionPassChiInfo pass_chi_info = 1;//过吃的信息
+	repeated PBDSSActionPassPengInfo pass_peng_info = 2;//过碰的信息
+	repeated int32 talk_cards = 3;//有话说的牌  /*只针对吃牌的有话说*/  /*碰牌的判定只根据*/
+	repeated int32 out_cards = 4; // 出过的牌
+	repeated int32 shangjia_out_cards = 5; // 上家出过并且自己没有报的牌
+	optional PBDSSActionPassHuInfo pass_hu_info = 6; // 过胡信息
+
+}
+
+message PBDSSActionPassChiInfo
+{
+	optional int32 chi_card = 1;//过吃的牌
+	optional int32 chi_dest_card = 2;//过吃的目标牌
+}
+
+message PBDSSActionPassPengInfo
+{
+	optional int32 peng_card = 1;//过碰的牌，手里有2张，后面再也不能碰
+}
+
+message PBDSSActionPassHuInfo
+{
+	repeated int32 pass_hu_card = 1;// 过胡的牌
+}
+
+message PBDSSActionShouInfo
+{
+	repeated int32 cards = 1;//小家收的牌
+}
+
+
+message PBDSSSeatWinInfo
+{
+	repeated ENDSSStyleType styles = 1;	// 花样 名堂
+	optional bool			is_fangpaohu = 2; // 是否为放炮胡
+	optional int32			fangpao_index = 3; // 放炮玩家座位号
+	optional bool			is_red_hu = 4; // 是否红胡
+	optional bool			is_black_hu = 5; // 是否黑胡
+	optional bool			is_haidi = 6; // 是否海底
+	optional bool			is_tou_hu = 7; // 是否偷胡
+	optional bool			is_zimo = 8; // 是否自摸
+	optional bool 			is_jin_20 = 9 ;//金20
+	optional bool 			is_quan_hong_quan_hei = 10 ; //全红全黑
+	optional bool 			kan_fan = 11;
+	optional bool 			dai_gou_fan = 12;
+	optional bool 			wang_pai_fan = 13;
+	optional bool 			xiao_qi_dui = 14;
+	optional bool 			is_sha_bao = 15;
+	optional bool 			is_tian_hu = 16;
+	optional bool  			is_18_lan = 17; // 是否十八烂	
+	optional bool 			is_weisigen = 18; //喂4根
+	optional bool           is_che_pao = 19; //扯炮
+	optional bool			is_si_gen_tou = 20 ; //四根头
+	optional bool 			is_duizihu = 21; //对子胡
+	optional bool 			is_longdui = 22; //龙队
+	optional bool 			is_qiangganghu = 23; //抢杠胡
+}
+
+// 一列牌 或 一方门子
+message PBDSSColumnInfo
+{
+	repeated int32 cards = 1;
+	optional ENDSSColType col_type = 2;	// 一提 一坎 一句话 一绞
+	optional int32 an_num = 4;	// 展示暗牌数量
+	optional int32 score = 5; // 胡息
+	optional int32 dest_card = 7;	// 目标牌
+	repeated PBDSSColumnInfo sub_col_info = 8;
+	repeated int32 original_cards = 9;	// 财神替换之前的cards
+	optional int32 token = 10;	// 序列号，协助客户端解决显示问题
+	repeated int32 an_kou_cards = 11;//暗扣的牌
+	optional int32 dest_index = 12 [default = -1];	// 目标牌来自的座位号
+	optional int32 dou_ba_index = 13 ; //都巴的来自的座位号
+}
+
+message PBDSSAction
+{
+	optional int64 tid = 1;
+	optional int32 seat_index = 2;
+	optional ENDSSActionType act_type = 3;	// 操作类型
+	optional int32 dest_card = 4; 			// 目标牌
+	optional PBDSSColumnInfo col_info = 5;		// 列组合
+	optional int32 left_card_num = 8;	// 剩余底牌数量
+	optional bool need_delay = 9; // out card 专用
+	repeated int32	baned_cards = 10;	// 不能出的牌 liu
+	optional bool   is_baopai = 11;		// 是否要报牌
+	optional int32 baopai_card = 12;		// 要报的牌
+	optional bool is_first_chu_pai = 13 [default = false]; // ccc DY 
+	optional bool is_zhao			=14;    //是不是招  GY     明牌
+	optional int32 toupai_num = 15 [default = 1];	// 偷牌数量
+
+	repeated PBDSSBaoInfo bao_info = 16 ;//报牌信息
+	optional bool is_after_peng_an = 17 ;
+
+	optional int32 baopai_num = 18; // 报牌数量
+
+	repeated PBDSSAnKouInfo an_kou_info = 19;//暗扣信息
+	optional bool is_disable_hu_pai = 20 ;
+	optional bool is_fan_ting = 21 ; //安岳判断是否翻得听用
+	optional int32 cause_tou_card = 22; //引发偷牌操作的牌
+	optional int32 max_mao = 23;	// 最大点数
+	optional int32 max_tuo = 24;	// 最大砣数
+	optional bool is_showed = 25 ;   //是否亮出
+}
+
+message PBDSSBaoInfo
+{
+	optional int32 bao_type = 1;//报类型（报过吃，报后对，报烂坎，报第四张）
+}
+
+message PBDSSAnKouInfo
+{
+	optional int32 card = 1;//暗扣的牌
+	repeated PBDSSBaoInfo bao_info = 2;//报牌信息
+}
+
+
+message PBDSSActionFlow
+{
+	optional int32 flow_token = 1;
+	optional PBDSSAction action = 2;
+}
+
+message PBDSSActionChoice
+{
+	optional int32 max_level = 1; //操作优先级
+	optional bool is_determine = 2; //是否做了操作
+	optional PBDSSAction determined_action = 4; //玩家做的操作
+	repeated PBDSSAction choices = 6; //可选择的操作
+	optional int32 determined_level = 7; // 决定的操作等级
+}
+
+message PBDSSTableFlowRecordItem
+{
+	optional int64 tid = 1; //桌子id
+	optional PBDSSTableConfig dss_conf = 2; //牌桌配置
+	repeated PBDSSTableSeat dss_seats = 3; //座位信息 (记录初始牌 玩家信息)
+	repeated PBDSSActionFlow dss_total_action_flows = 4;
+	optional int32 dealer = 5;
+	optional int32 round = 6;
+	optional CSNotifyGameOver game_over = 9;
+	optional int64 owner_uid = 10;
+}
+
+message PBDSSTableSeatBanedCards
+{
+	optional int32 baned_cards = 1; // 不能出的牌
+	optional int32 steal_time = 2; // 偷起来的次数
+}
+
+
+
+// =============================== 斗十四 ====================================
+message PBSDRGameTable
+{
+	optional int64 tid = 1;
+	optional int64 creator_uid = 2; 			// 房主
+	optional PBSDRTableConfig config = 3;
+	repeated PBSDRTableSeat seats = 4;  		// 座位信息
+	repeated int32 cards = 5; 					// 牌堆
+	optional ENTableState state = 6;
+	optional int32 game_start_stamp = 7;	// 游戏开始时间
+
+	optional int32 round = 10;
+	optional int32 dealer_index = 11;
+	optional int32 last_winner = 12; 			// 上把赢家
+	optional int32 operation_index = 13;		// 当前操作玩家
+	optional int32 dealer_index_2 = 14;			// 有滑庄时使用
+
+	optional PBGameRecord record = 20;			// 游戏记录
+	optional PBDissolveInfo dissolve_info = 21;	// 房间解散信息
+	repeated PBSDRActionFlow total_action_flows = 22;
+	repeated PBSDRActionFlow replay_action_flows = 23;	// 回放action_flows
+	optional PBSDRActionChoice max_pre_choice = 24;		// 预操作的最高优先级操作
+
+	optional int32 common_card = 31;		// 公共牌 缓存每次拿的牌
+	optional bool is_game_over = 32;		// 是否游戏已结束
+	optional bool is_dissolve_finish = 33;	// 是否解散结束
+	repeated int32 out_cards = 34; 			// 出牌列表
+	optional bool display_anpai = 35;		// 是否展示提牌
+	optional int32	jiang_card = 36;		// 台将牌
+	optional bool need_6_wei = 37;			// 报六位
+	optional bool need_show = 38;			// 展示翻得牌
+	optional int32	fanpai_index = 39;		// 翻牌index
+	optional int32 bomb_num = 40;	// 炸弹数量
+	optional int32 laizi_card = 41;	// 赖子牌
+	optional int32 soft_bomb_num = 42;	// 软炸弹数量（带赖子的炸弹）
+	repeated int32 dipai_cards = 43;	// 底牌
+	optional int32 joker_card = 44;			// 赖子牌
+	optional int32 bao_pei_index = 45;		//包赔的index
+	optional int32 jiao_dizhu_index = 46;			// 叫地主玩家的座位号
+	optional int32 first_mingpai_seat = 47;			// 第一个明牌的玩家
+	optional int32 wen_zhuang_num = 48;	// 稳庄局数
+	
+	optional int32 i_test_table_dealer_index = 49 [default = -1];	//座子定庄设置
+	repeated int32 i_test_cards_pile_cards = 50;	//座子牌堆设置
+	optional int32 i_test_joker_card		= 51[default = -1];
+	optional int32 i_test_jiang_card		= 52[default = -1];
+	optional int32 pizi_card = 53;	// 痞子牌
+	repeated int32 niu_index				= 54;	//牛的index	（客户端不能用）
+	repeated PBSDRTableResult win_results	= 55;	//最后的结果 头游，二游，三游，尾游
+	repeated int32 win_ret_index			= 56;	//赢家的index组
+	optional int32 win_type					= 57;	//获胜的类型
+	optional bool is_shuang_niu_give_up_over		= 58;	//是否是双牛玩家投降结束的
+	optional int32 single_out_all_card_seat_index	= 59;	//在这轮中牌出完的玩家的index
+	optional bool is_check_ting = 60;	// 是否为检测听牌
+	optional int32 has_gen_feng = 61; // 是否已跟风
+	//MATCH MATCH MATCH MATCH
+	optional int64 all_tuo_guan_index = 62[default = -1];	//全部进入托管的时候
+	optional int32 last_boom_seat = 63; // 上一个出炸弹玩家的index
+	//闯关
+	optional bool is_trusteeship_error = 64;	//是否是托管状态异常(3个人都托管)
+	optional int32 restart_times = 65; // 重开游戏次数
+	optional int32 max_piao_score = 66; // 最大漂分
+	optional int32 jiao_score = 67; // 叫分
+	optional int32 liu_ju_index = 68; // 流局次数
+	
+	//金币场
+	optional int32 fee = 69;	//牌局抽水
+}
+
+message PBSDRTableSeat
+{
+	optional PBTableUser 	user = 1; 	//座位上的玩家信息
+	optional ENSeatState 	state = 2; 	// 座位状态
+    optional int32 			index = 3; 	// 座位索引
+    optional int32			cost = 4;	// 房卡消耗
+    optional int32 			win_round = 5; // 所赢局数
+	
+	repeated int32			hand_cards = 10;	// 手牌
+	repeated int32			out_cards = 11; 	// 出牌列表 自己打出去没人要的
+	repeated int32			discards = 21;		// 出牌列表 自己翻的没人要的牌
+	optional int32			total_score = 12; 	// 累计胡息
+	optional int32 			final_score = 13;	// 本局胡息
+	optional int32 			hu_xi = 14;			// 胡息
+	optional int32 			multiple = 15;		// 番数
+	optional PBSDRActionChoice	action_choice = 16; 	//action choice data
+	repeated PBSDRColumnInfo 	out_col = 17; 			// 打出去的组(吃碰杠等)
+	optional PBSDRSeatWinInfo 	win_info = 18; 			//胡牌信息
+	optional int32 				action_token = 19;
+	repeated PBSDRColumnInfo 	winner_col_info = 20;	// 胡牌玩家的手牌组合
+	repeated PBSDRColumnInfo 	out_col_2 = 22; 		// 绍胡专用
+	repeated int32				hand_cards_2 = 23;		// 绍胡专用
+	optional bool 				is_jin_ding = 24;	// 是否金顶
+	optional int32				dian_num = 25;	// 点数
+	optional bool				is_hu_258 = 26;	// 258乱胡
+	
+	// 二次名堂分析临时缓存
+	repeated PBSDRColumnInfo 	re_winner_col_info = 27;	// 胡牌玩家的手牌组合
+	optional int32 			re_final_score = 28;	 	// 本局胡息
+	optional int32			re_final_dest_card = 29;	// 最大胡息胡牌的目标牌
+	
+	optional bool 			is_piao=30;        	//定飘
+	optional bool 			has_piao = 31;		// 玩家是否选过漂
+	optional int32			piao_score = 32;	// 漂分 1-5分，只能加，不能减
+	optional bool 			need_chibaozi = 33;	// 吃包子
+	optional int32 			qiang_num = 34;		// 枪数
+	repeated int32			baned_cards = 35;	// 不能打的牌
+	repeated int32			disable_chi_card = 36;	// 利川_不能吃的牌
+	optional bool 			has_fenkou_onhand=37;        	//利川_胡牌时是否有分口在手上
+	repeated int32			disable_wai_card = 38;	// 利川_不能歪的牌
+	optional bool 			can_hu_dandiao=39;        	//利川_有对子口不能单调一张
+	optional bool 			need_check_kua = 40;	// 是否需要检测挎
+	optional int32			ex_hu_xi = 41;		// 附加胡息
+	optional bool			is_da_hu = 42;		// 是否为大胡
+	optional bool			has_qihu = 43;		// 是否已弃胡
+	optional bool			has_jiehu = 44;		// 是否已借胡
+	repeated int32			pass_cards_chi = 45;	// 过吃
+	repeated int32			pass_cards_wai = 46;	// 过歪
+	repeated PBSDRSeatDelInfo			delete_col_info = 47;		// 需要删除的col
+	optional bool			has_kou_pai = 48;		// 是否已扣牌
+	optional bool			is_wait_hu = 49;		// 是否等胡 不能进张，等胡
+	repeated int32			baned_cards_2 = 50;		// 起手3张以上的牌，不能打，打了算笑胡
+	repeated int32			pass_peng_card = 52;		//过碰 
+	repeated int32			hou_shao_card = 53;		//后绍 
+
+	repeated int32			pass_cards_zhao = 54;	// 过招
+	repeated int32			pass_cards_hu = 55;	// 过胡
+	repeated PBSDRColumnInfo	qiang_col = 56;	// 抢过了的组合
+	repeated int32			pass_peng = 57;		// 过碰的牌
+	optional int32			hu_card = 58;		// 
+	optional int32			disable_4_times = 59;		//不能出牌4的次数
+	optional int32			disable_5_times = 60;		//不能出牌5的次数 	
+	optional int32			has_jinzhang = 61;		//是否进张
+	repeated int32			real_wai_dest_card = 62;	// 歪 吃 真正的destcard
+	repeated int32			dao_jin_cards = 63;	// 倒进的牌
+	optional int32			pre_chu_card = 64;	// 预出牌
+	repeated PBSDRCardColInfo	card_col_info = 65;	// 种类牌的信息
+	repeated int32			shenpai_zuhe = 66;	// 神牌做什么牌
+	optional int32			long_card = 67;//龙牌
+	optional bool			pre_is_hu_and_piao = 68;//飘 且 胡
+
+	optional int32			qi_hu_type = 69;	// 弃胡类型 1必吃 2必碰 3必招
+	optional int32			qi_hu_card = 70;	// 
+	optional bool			is_hu_out_col = 71;//是否胡外面
+	optional bool			has_fen_when_start = 72; // 起手是否有分牌
+	optional bool			is_first_in = 73; // 是否是第一次进张
+	repeated int32			card_map = 74;		// 楚胡专用 记录起手4龙头，5龙头，6龙头
+	optional bool 			is_has_ke_zi_in_start = 75;    //开局有克子
+	optional int32  		alone_ke_zi_in_start = 76;    //开局的独克子是哪个
+	optional bool 			is_after_xiao_hu_continue = 77;    //是否是笑胡后接着打
+	optional bool 			is_guan_xiao_tou = 78 ;   //是否是关小偷
+	optional int32 			guo_chi = 79 ;   //是否过吃  	0代表四龙头的牌型   1代表所有的牌型
+	optional int32 			guo_peng = 80 ;   //是否是过碰  0代表四龙头的牌型   1代表所有的牌型
+	optional int32 			guo_zhao = 81 ;   //是否是过招	0代表四龙头的牌型   1代表所有的牌型
+	optional int32 			guo_deng = 82 ;   // 是否是过登	0代表四龙头的牌型   1代表所有的牌型
+	repeated int32			guo_zhang_card = 83;  //过张的牌
+	repeated int32			long_tou_guo_zhang_card = 84;  //四龙头过张的牌  
+	optional int32 			kou_card_index = 85;
+	optional bool 			has_bao_du_kou = 86;	// 是否已报独口
+	optional bool			is_auto_kou_pai = 87;	// 是否为系统自动扣牌 被动扣牌
+	optional bool			can_da_hu = 88;	// 是否可胡大胡
+
+	optional bool 			need_check_double = 89; // 是否需要加倍
+	optional int32			double_times = 90;	// 加倍次数
+	optional int32			bomb_num = 91;	// 炸弹数量
+	optional int32			bao_type = 92;	// 报牌类型
+	optional bool			is_buy = 93;	// 是否买牌
+	optional bool			is_lai_zhuang = 94;	// 是否是赖庄家
+	optional int32 			soft_bomb_num = 95;	// 软炸弹数量（带赖子的炸弹）
+	optional bool			is_baozi_zhuang = 96;	// 是否是吃包子当的庄
+	repeated PBSDRBoomCardColInfo	boom_info = 97;	//出过得炸弹 
+	optional int32			bao_xing_num = 98;	// 报星数量
+	optional int32			without_chupai_chance = 99;	// 摸牌后不用打的机会（由卖牌产生）}
+	optional bool			can_hei_da_hu = 100; // 黑大胡
+	repeated int32			can_zi_mo_cards = 101;  //  能自模糊的牌
+	repeated int32			can_dian_pao_cards = 102;  //  能点炮胡的牌
+	optional int32 			hao_hua_num = 103;	// 七对 豪华数量
+	optional bool			is_diao_jiang = 104;	// 癞子掉将
+	optional bool			has_dongzhang = 105;	// 是否动张
+	repeated int32			test_hand_cards = 106;
+	optional int32			is_mingpai = 107;	// 是否明牌
+	optional int32			is_mingpai_after_deal_cards = 108;	// 是否发牌后明牌
+	optional int32			qiang_di_zhu_times = 109;	// 抢地主次数
+	optional bool			is_jiao_dizhu = 110;	// 是否叫地主
+	optional int32			hu_pai_level = 111;
+	optional int32			ding_zhang_card = 112; // 定张的牌
+	optional int32			ding_zhuang_card = 113;	// 定庄的牌
+	repeated int32			history_scores = 114;	// 历史总分
+	repeated int32 			i_test_hand_cards = 115;	//写牌
+	optional bool 			has_bao_cong_hu = 116; // 是否报聪胡
+	optional int32			chu_score = 117[default = 0];	// 出的分数
+	optional int32			half_score_num = 118[default = 0];	// 0.5分的个数
+	optional int32			jia_bei_show_info = 119;	//展示加倍的时候的信息 -1: 不显示 0: 发 1: 中
+	optional int32 			niu_gui_index		= 120;	//是否是牛鬼组	2位黑桃2,3位黑桃3，5为2和3都有，平时为0
+	repeated int32			guan_cards = 121;  //  放手里的观牌 
+	repeated int32			hua_cards = 122;  //  放手里的滑牌
+	optional int32			need_zhua_times = 123;	// 剩余抓牌次数
+	repeated int32			jian_cards = 124;  //  捡的牌
+	optional int32			is_hu_pai = 125;	// 是否胡牌
+	repeated int32			huan_pai_card = 126;	//用来交换的牌
+	optional bool 			has_bao_jiao = 127;	//	是否已报叫
+	optional int32			lock_lai_zi_num = 128; // 可用癞子数量
+	repeated int32			jiao_cards = 129; // 叫牌列表
+	optional int32			ting_card = 130;	// 听牌
+	repeated PBSDRTingInfo  ting_info = 131;	
+	repeated PBSDRCheckHuInfo check_hu_info = 132; // 下叫胡牌相关信息
+	optional int32			guan_times = 133;	// 观牌次数
+
+	repeated PBSDRColumnInfo an_2_col_on_hand = 134;//扎手上的牌
+	optional int32 			zha_num = 135;//扎的次数
+	optional bool 			is_shuang_niu_liang_pai	= 136;	//是否双牛亮牌
+	optional int32 			over_you_index = 137;		//打完牌，游的index
+	optional int32 dian_gang_num = 138; //点杠的数量
+	optional int32 peng_gang_num = 139;
+	optional int32 an_gang_num = 140;
+	optional int32 bao_gang_num = 141;
+	repeated int32 chu_pai_cards = 142;
+	optional int32 			is_trusteeship			= 143;		//玩家托管的状态，是手动还是自动出牌
+	optional int64			trusteeship_time		= 144;	//托管的时间戳
+	optional int64			end_trusteeship_time	= 145;	//托管的时间戳	
+	optional bool  is_check_da_gong = 146;
+	optional bool  has_da_gong = 147;
+	optional bool  is_2_shao = 148;
+	optional bool  is_2_shao_da_pai = 149;
+	repeated int64 chi_dest_card = 150;
+	repeated PBShouColInfo 	shou_cols				= 151;	//一手的手col
+	optional PBSDRAction 	robot_action_buff		= 152;	//机器人选项缓冲区
+
+
+	//比赛场相关
+	optional bool 			is_tuo_guan 	=  200[default = false];	//是否托管
+	optional int32 			rank_index 	    =  201;	//排名
+	optional bool 			has_leave_match =  202[default = false];	//已经离开比赛
+	optional int32 			enter_time 	    =  203;	//进入的时间
+}
+
+message PBShouColInfo
+{
+	optional int32 cardtype = 1; // 牌型
+	optional int32 real 	= 2;	// 牌型起点
+	optional int32 num 		= 3;	// 牌型长度
+	repeated int32 cards 	= 4;	// 牌组
+}
+
+message PBSDRBoomCardColInfo
+{
+	repeated int32 cards = 1;
+	optional int32 boom_type = 2;
+}
+
+message PBSDRCardColInfo
+{
+	optional int32 card_type = 1;
+	optional int32 score = 2;
+	optional int32 need_shen_num = 3;
+	optional bool can_add_kou = 4;
+	optional int32 add_kou_card = 5;
+	optional int32 add_kou_score = 6;
+	optional bool can_del_kou = 7;
+	optional int32 delete_kou_card = 8;
+	optional int32 delete_kou_score = 9;
+	repeated PBSDRColumnInfo 	out_col = 10; 			// 外面的组合
+	repeated int32 hand_cards = 11;
+	optional int32 kou_num = 12;
+	repeated int32 need_shen_card = 13;
+}
+
+message PBSDRSeatDelInfo
+{
+	optional bool is_banlong = 1;
+	optional int32 kan_card = 2;
+	optional int32 long_fen = 3;
+}
+
+message PBSDRSeatWinInfo
+{
+	repeated ENSDRStyleType styles = 1;			// 花样 名堂
+	optional int32 fangpao_index = 2;
+	optional int32 coins_change_value = 27;	//金币改变值
+}
+
+// 一列牌 或 一方门子
+message PBSDRColumnInfo
+{
+	repeated int32 cards = 1;
+	optional ENSDRColType col_type = 2;	// 一提 一坎 一句话 一绞
+	optional int32 an_num = 3;			// 展示暗牌数量
+	optional int32 score = 4; 			// 胡息
+	optional int32 dest_card = 5;		// 目标牌
+	optional int32 token = 6;			// 序列号，协助客户端解决显示问题
+	optional int32 dest_index = 7 [default = -1];	// 目标牌来自的座位号
+	optional bool is_waichi = 8;	// 是否为歪吃
+	optional bool is_bi_chi = 35;	// 是否必吃
+	optional int32 waichi_index = 9;	// 升级的目标col的index
+	optional int32 out_card_num = 10;	// 进张数量 用于区分登子的来源，和算分
+	optional PBSDRColumnInfo sub_col = 11;
+	optional int32 dest_card_2 = 12;		// 目标牌2
+	repeated int32 shenpai_card = 13; // col中的哪几张牌是神牌
+	optional bool is_tuo = 14 [default = false];	// 是否拖成一原句 百胡
+	optional bool is_hupai_derive = 15; // 是否是胡牌分析的时候，由手牌衍生而成的col
+	repeated int32 original_cards = 16;	// 原始牌 赖子
+	optional bool can_raise = 17;	// 是否能升级
+	optional int32 dest_index_2 = 18 [default = -1];	// 目标牌来自的座位号
+	optional bool is_qi_shou_mai = 19; 	//是否是起手卖
+	optional bool has_laizi = 20; // 是否包含赖子
+	optional int32 niu_gui_index  = 21;	//是否有牛牌 2位黑桃2,3位黑桃3，5为2和3都有，平时为0
+	optional int32 lai_zi_num = 22;	// 包含癞子数量
+	optional bool is_peng_ting = 23;	// 是否碰听
+}
+
+message PBSDRAction
+{
+	optional int64 tid = 1;
+	optional int32 seat_index = 2;
+	optional ENSDRActionType act_type = 3;	// 操作类型
+	optional int32 dest_card = 4; 			// 目标牌
+	optional PBSDRColumnInfo col_info = 5;		// 列组合
+	optional bool need_delay = 6; 		// out card 专用
+	optional int32 left_card_num = 7;	// 剩余底牌数量
+	optional bool is_napai = 8;			// 是否为拿牌 EN_SDR_ACTION_OUT_CARD专用
+	repeated PBSDRBaoInfo bao_info = 9 ;//利川_报牌信息
+	repeated int32 baned_cards = 10;	// 不能打的牌
+	optional bool display_anpai = 11;	// 展示提牌
+	optional int32 sub_card = 12;
+	optional int32 choice_token = 13; //区分choices
+	optional int32 dest_index = 14; 			// 目标玩家
+	repeated int32 dele_hand_cards = 15;//操作需要删除的手牌
+	optional bool need_self_chu = 16[default = false]; 		// 是否该自己出牌
+	optional int32 another_peng_index = 17;//野三关有招有碰别人有碰的情况下展示
+
+	optional ENPokerType 	poker_type = 18;
+	optional int32			poker_val = 19;
+	optional bool 			is_single_over = 20;	// 单回结束
+	repeated bool 			buy_results = 21;	// 买牌结果
+	optional int32			dealer = 22;	// 庄家，地主
+	optional int32			piao_score = 23;	// 漂分
+
+	// 客户端 透传数据
+	optional int32 cardtype = 30; // 牌型
+	optional int32 real = 31;	// 牌型起点
+	optional int32 num = 32;	// 牌型长度
+	repeated int32 cards = 33;	// 牌组
+	
+	optional bool  is_baozi_zhuang = 34;	// 是否是包子庄
+	repeated int32 dipai_cards = 35; // 底牌
+	optional int32 laizi_card = 36; // 癞子牌
+	optional int32 bao_xing_num = 37;	// 报星数量
+	optional int32 refresh_seat_total_score = 38;	// 刷新座位总分
+	optional bool is_first_chu_pai = 39;	//是否是第一出牌，需要出有方块4的牌型
+	repeated int32 jian_cards = 40;	// 捡的牌
+	optional int32 last_action_index = 41; // 上个操作的来源
+	optional bool is_jian_card = 42; 		// 是否是捡的牌
+	optional int32 need_zhua_times = 43; // 剩余抓牌次数
+	optional bool is_mo_ting = 44; // 是否为摸听
+	repeated PBSDRTingInfo ting_info = 45;
+	optional bool is_auto_action = 46; // 是否为自动操作
+	optional int32 guan_times = 47; // 观牌次数
+
+	optional int32 zha_num = 48;//扎数
+	optional int32 over_you_index = 49;	//打完牌，游的index
+	optional PBDissolveInfo dissolve_info = 50;
+	repeated int32 jiao_cards = 51;	// 叫牌列表
+	optional int32 table_multiple = 52;		// 炸弹倍数
+	optional int32 jiao_score = 53;		// 叫分
+
+	//比赛相关 
+	optional bool is_tuo_guan_action = 100[default = false];
+	optional bool is_na_pai_has_put_out = 101[default = false];
+	//闯关
+	optional bool is_trustee_ship_auto_action	= 200;	//是否是托管的自动出牌
+}
+
+message PBSDRTingInfo
+{
+	optional int32 chu_card = 1;
+	repeated int32 hu_cards = 2;
+}
+
+message PBSDRBaoInfo
+{
+	optional int32 bao_type = 1;//利川_报类型
+}
+
+enum ENSDRBaoType
+{
+	EN_SDR_BAO_TYPE_SAN_ZHANG = 1;//利川_三张
+	EN_SDR_BAO_TYPE_BI_GUA = 2;//利川_必挂三条口
+	EN_SDR_BAO_TYPE_KE_HU_BU_ZHUI = 3; //利川_可胡不追
+	EN_SDR_BAO_TYPE_DU_KOU = 4;	// 独口 
+	EN_SDR_BAO_TYPE_LIU_WEI = 5;	// 六位
+	EN_SDR_BAO_TYPE_HOU_SHAO = 6;	// 后绍
+	EN_SDR_BAO_TYPE_YOU = 7;	// 有
+	EN_SDR_BAO_TYPE_MEI_YOU = 8;	// 没有
+	EN_SDR_BAO_TYPE_DAO_JIN = 9;	// 倒进
+	EN_SDR_BAO_GUAN_XIAO_TOU = 10;  //关小偷
+	EN_SDR_BAO_TYPE_LIU_TUAN_YUAN = 11  ;   //6个团员
+	EN_SDR_BAO_TYPE_Qi_Shou_Wu_Jiang = 12;	// 起手无将
+	EN_SDR_BAO_TYPE_BAO_XING = 13;	// 报星
+	EN_SDR_BAO_TYPE_BAO_CONG_HU = 14;	// 报聪胡
+}
+
+message PBSDRActionFlow
+{
+	optional int32 flow_token = 1;
+	optional PBSDRAction action = 2;
+}
+
+message PBSDRActionChoice
+{
+	optional int32 max_level = 1; 	//操作优先级
+	optional bool is_determine = 2; //是否做了操作
+	optional PBSDRAction determined_action = 4; 	//玩家做的操作
+	repeated PBSDRAction choices = 6; 		//可选择的操作
+	optional int32 determined_level = 7; 	// 决定的操作等级
+}
+
+message PBSDRTableFlowRecordItem
+{
+	optional int64 tid = 1; //桌子id
+	optional PBSDRTableConfig sdr_conf = 2; //牌桌配置
+	repeated PBSDRTableSeat sdr_seats = 3; //座位信息 (记录初始牌 玩家信息)
+	repeated PBSDRActionFlow sdr_total_action_flows = 4;
+	optional int32 dealer = 5;
+	optional int32 round = 6;
+	optional CSNotifyGameOver game_over = 9;
+	optional int64 owner_uid = 10;
+	optional int32 jiang_card = 11;
+	
+	optional int32 laizi_card = 12; // 赖子牌
+	repeated int32 dipai_cards = 13; // 斗地主 底牌
+	optional int32 joker_card = 14;	//扯胡赖子牌
+	optional int32 left_card_num = 15; //剩余数量
+	optional int32 pizi_card = 16; // 痞子牌
+}
+message PBSDRCheckHuInfo
+{
+	optional int32 dest_card = 1; 	// 目标牌
+	repeated int32 jiao_card = 2; //是否做了操作
+	repeated int32 mutiple = 3; 	//番数
+}

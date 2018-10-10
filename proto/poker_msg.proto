@@ -1,0 +1,449 @@
+import "poker_common.proto";
+import "poker_msg_basic.proto";
+import "poker_msg_ss.proto";
+import "poker_msg_cs.proto";
+import "poker_msg_log.proto";
+
+message PBHead {
+	optional int32 main_version = 1;	//主版本号
+	optional int32 sub_version = 2;		//次版本号
+	optional int32 proto_version = 3;	//协议版本号
+	optional int32	channel_id = 4;		//渠道号
+	optional string	device_id = 5;		//设备标志
+	optional string device_name = 6;	//设备名称
+	optional string mac_addr = 7;		//mac地址
+	optional string os = 8;				//系统
+	optional string osv = 9;			//系统版本
+	optional string band = 10;			//品牌
+	optional string imei = 11;			//IMEI
+	optional int64 cmd = 12;			//
+	optional int32	json_msg_id = 13;	// json协议
+	optional string json_msg	= 14;
+	optional int64	uid			= 15;
+}
+
+////////////////////////////////////////////////////////////
+// 大协议定义
+////////////////////////////////////////////////////////////
+message PBCSMsg
+{
+	oneof msg_union
+	{
+		//基础协议
+		CSRequestLogin cs_request_login = 0x0001; // 请求登录
+		CSResponseLogin cs_response_login = 0x0002; // 登录响应
+		CSNotifyRepeatedLogin cs_notify_repeated_login = 0x0003;//推送玩家重复登录
+		CSNotifyChipChange 		cs_notify_chip_change = 0x0004; // 推送金币改变
+		CSRequestHeartBeat		cs_request_heart_beat	= 0x0005;
+		CSResponseHeartBeat		cs_response_heart_beat	= 0x0006;
+		CSNotifyPushMessage		cs_notify_push_message = 0x0007;
+
+		CSRequestEcho			cs_request_echo = 0x0009;
+		CSResponseEcho			cs_response_echo = 0x000A;
+		
+		CSRequestConnectIP		cs_request_connect_ip = 0x00B;
+		CSResponseConnectIP		cs_response_connect_ip = 0x00C;
+		CSNotifyListIP 			cs_notify_list_ip = 0x00D;
+
+		CSRequestRankListInfo		cs_request_rank_list_info	= 0x010;
+		CSResponseRankListInfo		cs_response_rank_list_info	= 0x011;
+		
+		CSNotifyDiamondChange cs_notify_diamond_change 	= 0x012;	//推送钻石改变
+		CSNotifyBonusChange cs_notify_bonus_change 		= 0x013;	//推送奖金改变	
+		CSNotifyCoinsChange	cs_notify_coins_change		= 0x014;	//金币改变
+		
+		
+		//内部服务器注册请求
+		SSRegistInnerServer ss_regist_inner_server = 0x0100;
+		SSNotifyInnerServer ss_notify_inner_server = 0x0101; //route服务器给子节点下发的通知
+		
+		// 登录注册相关
+		SSRequestLogin ss_request_login = 0x102;
+		SSResponseLogin ss_response_login = 0x103;
+		//SSRequestRegist			ss_request_regist			= 0x104;
+		//SSRequestCreateUid		ss_request_create_uid		= 0x105;
+		//SSResponseCreateUid		ss_response_create_uid		= 0x106;
+		//SSRequestAccBindUid		ss_request_acc_bind_uid		= 0x107;
+		//SSResponseAccBindUid	ss_response_acc_bind_uid	= 0x108;
+		SSRequestAccountUid		ss_request_acc_uid			= 0x109;
+		SSResponseAccountUid	ss_response_acc_uid			= 0x10A;
+		//SSResponseRegist		ss_response_regist			= 0x10B;
+		
+		SSReportGameSvrdInfo ss_report_game_info = 0x010C;
+		SSNotifyRoomSvrd ss_notify_room_svrd = 0x010D;
+		SSNotifyGameSvrdClosed ss_notify_gamesvrd_closed = 0x10E;
+		SSNotifyGameSvrdRetire ss_notify_gamesvrd_retired = 0x10F;
+		SSNotifyPlayerSkipMatchPosChange ss_notify_player_skip_match_pos_change = 0x121;
+		SSNotifyPlayerPosChange ss_notify_player_pos_change = 0x122;
+
+		//登录服务器推送请求
+		SSNotifyPlayerHandlerClose ss_notify_player_handler_close = 0x0900;
+		SSNotifyPlayerRepeatedLogin ss_notify_player_repeated_login = 0x901;
+
+		//房间服务器 0x1001 ~ 0x1200
+		CSRequestCreateTable	cs_request_create_table = 0x1001;
+		CSResponseCreateTable	cs_response_create_table = 0x1002;
+		CSRequestEnterTable cs_request_enter_table = 0x1003;
+		CSResponseEnterTable cs_response_enter_table = 0x1004;
+
+		CSRequestTableDetail cs_request_table_detail = 0x1050;//请求桌子详情
+		CSResponseTableDetail cs_response_table_detail = 0x1051;//回复桌子详情
+		CSRequestDissolveTeaBarTable cs_request_dissolve_tea_bar_table = 0x1052;//群主请求解散茶馆房间
+		CSResponseDissolveTeaBarTable cs_response_dissolve_tea_bar_table = 0x1053;//回复群主解散茶馆房间
+		
+		SSNotifyTableDissolved ss_notify_table_dissolved = 0x1100;
+		CSRequestFPFCreateTable	cs_request_fpf_create_table = 0x1101;
+		CSResponseFPFCreateTable	cs_response_fpf_create_table = 0x1102;
+		CSRequestDelegateTableInfo cs_request_delegate_table_info = 0x1103;
+		CSResponseDelegateTableInfo cs_response_delegate_table_info = 0x1104;
+		CSRequestDissolveDelegateTable cs_request_dissolve_delegate_table = 0x1105;
+		CSResponseDissolveDelegateTable cs_response_dissolve_delegate_table = 0x1106;
+		CSRequestDaerCreateTable	cs_request_daer_create_table = 0x1107;
+		CSResponseDaerCreateTable	cs_response_daer_create_table = 0x1108;
+		InterEventUnlock			inter_event_unlock = 0x1109;
+		// =============================== 斗十四 ====================================
+		CSRequestDssCreateTable		cs_request_dss_create_table = 0x110A;
+		CSResponseDssCreateTable	cs_response_dss_create_table = 0x110B;
+		CSRequestDssEnterTable		cs_request_dss_enter_table = 0x110C;
+		CSResponseDssEnterTable		cs_response_dss_enter_table = 0x110D;
+		// =============================== 上大人 ====================================
+		CSRequestSdrCreateTable		cs_request_sdr_create_table = 0x110E;
+		CSResponseSdrCreateTable	cs_response_sdr_create_table = 0x110F;
+		CSRequestSdrEnterTable		cs_request_sdr_enter_table = 0x1110;
+		CSResponseSdrEnterTable		cs_response_sdr_enter_table = 0x1111;
+		// gm
+		SSRequestTableLog			ss_request_table_log = 0x1112;
+		SSResponseTableLog			ss_response_table_log = 0x1113;
+		SSRequestDissolveTable		ss_request_dissolve_table = 0x1114;
+		SSResponseDissolveTable		ss_response_dissolve_table = 0x1115;
+		
+		//teabar
+		SSRequestTableInfo ss_request_table_info = 0x1116;
+		SSResponseTableInfo ss_response_table_info = 0x1117;
+		
+		//闯关
+		CSRequestSkipMatchGame cs_request_skip_match_game 	= 0x1118;
+		CSResponseSkipMatchGame cs_response_skip_match_game = 0x1119;
+		//金币场
+		CSRequestCoinMatchGame cs_request_coin_match_game 	= 0x111a;	//金币场匹配
+		CSResponseCoinMatchGame cs_response_coin_match_game	= 0x111b;	//金币场匹配结果
+
+		//通知创建房间
+		SSNotifyCreateTable ss_notify_create_table = 0x1151;
+		
+		//大厅服 0x1201 ~ 0x1500
+		//CSRequestGetUserInfo		cs_request_get_user_info	= 0x1201;
+		//CSResponseGetUserInfo		cs_response_get_user_info	= 0x1202;
+		//CSRequestUpdateUserInfo		cs_request_update_user_info		= 0x1203;
+		//CSResponseUpdateUserInfo	cs_response_update_user_info	= 0x1204;
+		//CSRequestUpdateConfig		cs_request_update_config	= 0x1205;
+		//CSResponseUpdateConfig		cs_response_update_config	= 0x1206;
+		CSRequestUserRecord cs_request_user_record = 0x1207;
+		CSResponseUserRecord cs_response_user_record = 0x1208;
+		CSRequestUpdateUserInfo cs_request_update_user_info = 0x1209;
+		CSResponseUpdateUserInfo cs_response_update_user_info = 0x120A;
+		CSRequestTableFlowRecord cs_request_table_flow_record = 0x120B;
+		CSResponseTableFlowRecord cs_reponse_table_flow_record = 0x120C;
+		CSRequestReplayCode cs_request_replay_code = 0x120D;
+		CSResponseReplayCode cs_response_replay_code = 0x120E;
+		CSRequestReplayCodeData cs_request_replay_code_data = 0x120F;
+		CSResponseReplayCodeData cs_response_replay_code_data = 0x1210;
+		CSRequestOnClickAvatar cs_request_on_click_avatar = 0x1211;
+		SCResponseOnClickAvatar sc_response_on_click_avatar = 0x1212;
+		CSRequestUserActivityGameInfo	cs_request_user_activity_game_info	= 0x1213;
+		CSResponseUserActivityGameInfo	cs_response_user_activity_game_info	= 0x1214;
+		CSRequestGiveUpSkipMatchLevel cs_request_give_up_skip_match_level 	= 0x1215;
+		CSResponseGiveUpSkipMatchLevel cs_response_give_up_skip_match_level = 0x1216;
+		
+		//游戏服务器 0x2001 ~0x3000
+		CSNotifySitDown cs_notify_sit_down = 0x2003;
+		CSNotifySeatInfo	cs_notify_seat_info = 0x2004;
+		CSNotifyNextOperation cs_notify_next_operation = 0x2005;
+		CSNotifySeatOperationChoice cs_notify_seat_operation_choice = 0x2006;
+		CSRequestReadyForGame cs_request_ready_for_game = 0x2007;
+		CSResponseReadyForGame cs_response_ready_for_game = 0x2008;
+		CSNotifyReadyForGame cs_notify_ready_for_game = 0x2009;
+		CSRequestDoAction cs_request_do_action = 0x200A;
+		CSResponseDoAction cs_response_do_action = 0x200B;
+		CSNotifyActionFlow cs_notify_action_flow = 0x200C;
+		CSNotifyPlayerDealMJ cs_notify_player_deal_mj = 0x200D;
+		CSNotifyGameStart cs_notify_game_start = 0x200E;
+		CSNotifyGameOver cs_notify_game_over = 0x200F;
+		CSRequestDissolveTable cs_request_dissolve_table = 0x2010;
+		CSResponseDissolveTable cs_response_dissolve_table = 0x2011;
+		CSNotifyDissolveTableOperation cs_notify_dissolve_table_operation = 0x2012;
+		
+		CSRequestSendInteractiveProp cs_request_send_interactive_prop = 0x2013;
+		CSResponseSendInteractiveProp cs_response_send_interactive_prop = 0x2014;
+		CSNotifyInteractionMessage cs_notify_interaction_message = 0x2015;
+		
+		CSRequestChat cs_request_chat = 0x2016;
+		CSResponseChat cs_response_chat = 0x2017;
+		CSNotifyChat cs_notify_chat = 0x2018;
+		
+		CSRequestTableRecord cs_request_table_record = 0x2019;
+		CSResponseTableRecord cs_response_table_record = 0x201A;
+		CSNotifyDissolveTable cs_notify_dissolve_table = 0x201B;
+		CSNOtifyPlayerConnectionState cs_notify_player_connection_state = 0x201C;
+		
+		CSRequestLogoutTable cs_request_logout_table = 0x201D;
+		CSResponseLogoutTable cs_response_logout_table = 0x201E;
+		CSNotifyLogoutTable cs_notify_logout_table = 0x201F;
+
+		CSNotifyStartPiao cs_notify_start_piao = 0x2020;
+		CSRequestSelectPiao cs_request_select_piao = 0x2021;
+		CSResponseSelectPiao cs_response_select_piao = 0x2022;
+		CSNotifySelectPiao cs_notify_select_piao = 0x2023;
+		
+	
+		CSNotifyTalkCard cs_notify_talk_card = 0x2024;//通知有话说
+		CSRequestKouPai cs_request_kou_pai = 0x2025; // 扣牌
+		CSResponseKouPai cs_response_kou_pai = 0x2026; // 扣牌
+		CSNotifyChibaozi cs_notify_chi_bao_zi = 0x2027; // 吃包子
+		CSNotifyLeftCardNum cs_notify_left_card_num = 0x2028; //通知牌的数量
+		CSNotifyHuCards cs_notify_hu_cards = 0x2029; //通知胡牌
+		
+		CSRequestSetNextRoundHandCards cs_request_set_next_round_hand_cards = 0x202a; //通知下一局的牌
+		CSResponseSetNextRoundHandCards  cs_response_set_next_round_hand_cards = 0x202b; //
+		CSRequestSetNextCard cs_request_set_next_card = 0x202c;	//通知下一张牌是什么
+		CSResponseSetNextCard cs_response_set_next_card = 0x202d;
+		CSNotifyMingPai cs_notify_ming_pai = 0x202e; //通知明牌
+		CSNotifyNiu cs_notify_niu = 0x2030;	//通知双牛
+		CSNotifyHuInfo cs_notify_hu_info = 0x2031;	// 广播胡牌信息
+		
+		//比赛场
+		CSResponseChangeTuoGuanState   cs_response_change_tuo_guan_state = 0x2032;
+		CSNotifyTuoguanInfo     cs_notify_tuo_guan_info = 0x2033;
+		CSRequestLeaveMatch		cs_request_leave_match = 0x2034;
+		CSResponseLeaveMatch	cs_response_leave_match = 0x2035;
+		CSRequestChangeTuoGuanState   cs_request_change_tuo_guan_state = 0x2036;
+		//闯关
+		CSNotifySkipMatchResult cs_notify_skip_match_result = 0x2037;	//广播闯关结果
+		CSRequestTrusteeship cs_request_trusteeship			= 0x2038;	//托管
+		CSResponseTrusteeship cs_response_truesteeship		= 0x2039;	//托管回复
+		CSNotifyTrusteeship cs_notify_trusteeship			= 0x2040;	//通知其他人
+		//闯关中的金币场
+		CSNotifyMatchResult cs_notify_match_result			= 0x2043;
+		
+		//game inner msg
+		SSInnerReportGameRecord ss_inner_report_game_record = 0x3001;
+		SSInnerDissolveTable ss_inner_dissolve_table = 0x3002;
+		SSRequestUpdateRankList	ss_request_update_rank_list		= 0x3003;
+		SSInnerOnDelegateTableGameOver ss_inner_on_delegate_table_game_over = 0x3004;
+		SSInnerOnDelegateTableGameStart ss_inner_on_delegate_table_game_start = 0x3005;
+		SSInnerNotifyAutoReleaseTable ss_inner_notify_auto_release_table = 0x3006;
+		SSInnerNotifyClearTableOwnerTableInfo ss_inner_notify_clear_table_owner_table_info = 0x3007;
+		
+		SSInnerNotifyLogoutTable ss_inner_notify_logout_table = 0x3008;
+		SSInnerKickOutPlayer ss_inner_kick_out_player = 0x3009;
+		SSInnerUpdateSkipMatchResult ss_inner_update_skip_match_result	= 0x300a;
+		SSUpdateDBSkipMatchResult ss_update_db_skip_match_result 		= 0x300b; 
+		SSInnerUpdateMatchResult ss_inner_update_match_result			= 0x300c;
+		SSInnerNotifyKickoutUser ss_inner_notify_kickout_user			= 0x300d;
+		
+		// 读写数据相关
+		SSRequestQueryData		ss_request_query_data			= 0x4050;
+		SSResponseQueryData		ss_response_query_data			= 0x4051;
+		SSRequestSaveData		ss_request_save_data			= 0x4052;
+		SSResponseSaveData		ss_response_save_data			= 0x4053;
+		SSRequestGetUserData		ss_request_get_user_data		= 0x4054;
+		SSResponseGetUserData		ss_response_get_user_data		= 0x4055;
+		SSRequestUpdateUserData		ss_request_update_user_data		= 0x4056;
+		SSResponseUpdateUserData	ss_response_update_user_data	= 0x4057;
+	
+		
+		GMUpdateChipsMulti gm_update_chips_multi = 0x4100;
+		GMPushMessageMulti gm_push_message_multi = 0x4101;
+		GMRequestNotifyShareSuccess gm_request_notify_share_success 				= 0x4102;
+		GMResponseNotifyShareSuccess gm_response_notify_share_success 				= 0x4103;
+		GMRequestEditUserActivityGameInfo gm_request_edit_user_activity_game_info 	= 0x4104;
+		GMResponseEditUserActivityGameInfo gm_response_edit_user_activity_game_info = 0x4105;
+		CSNotifyShareSuccess cs_notify_share_success								= 0x4106;
+		
+		
+		// 放炮罚服务器 0x5001 ~0x6000
+		// ============= fpf ============================
+		CSRequestFPFEnterTable	cs_request_fpf_enter_table = 0x5001;
+		CSResponseFPFEnterTable cs_response_fpf_enter_table = 0x5002;
+		CSRequestFpfDoAction	cs_request_fpf_do_action = 0x5003;
+		CSResponseFpfDoAction	cs_response_fpf_do_action = 0x5004;
+		CSNotifyPlayerDealCard	cs_notify_player_deal_card = 0x5005;
+		InterEventAutoAction inter_event_auto_action = 0x5006;
+		InterEventOnDoActionOver inter_event_on_do_action_over = 0x5007;
+		CSNotifyFPFOutCards	cs_notify_fpf_out_cards = 0x5008;
+		CSNotifyFPFFinish		cs_notify_fpf_finish = 0x5009;
+		CSRequestFPFAbandonHu	cs_request_fpf_abandon_hu = 0x500A;
+		CSResponseFPFAbandonHu	cs_response_fpf_abandon_hu = 0x500B;
+		//CSNotifyFPFAddCards	cs_notify_fpf_add_cards = 0x500C;
+		CSNotifyFPFUpdateCards cs_notify_fpf_update_cards = 0x500D;
+		CSNotifyFPFAbandonHu	cs_notify_fpf_abandon_hu = 0x500E;
+		InterEventOnGameStart inter_event_on_game_start = 0x500F;
+		SSInnerAutoQihu		inner_auto_qihu = 0x5010;
+		CSRequestOffLine	cs_request_off_line = 0x5011;
+		CSResponseOffLine	cs_response_off_line = 0x5012;
+
+		// 泸州大贰服务器 0x6001 ~0x6500
+		// ================ daer =========================
+		CSRequestDaerEnterTable	cs_request_daer_enter_table = 0x6001;
+		CSResponseDaerEnterTable cs_response_daer_enter_table = 0x6002;
+
+		// ================ 斗十四 =========================
+		// 成都斗十四 0x7001 ~0x7200
+		CSRequestDSSDoAction cs_request_dss_do_action = 0x7001;
+		CSResponseDSSDoAction cs_response_dss_do_action = 0x7002;
+		//CSNotifyDSSOutCards cs_request_dss_out_cards = 0x7003;
+		//
+		//// ================ 上大人 =========================
+		// 成都斗十四 0x7201 ~0x7400
+		CSRequestSDRDoAction cs_request_sdr_do_action = 0x7201;
+		CSResponseSDRDoAction cs_response_sdr_do_action = 0x7202;
+		
+		
+		//log
+		LogOnline			log_online			= 0x6003; // 在线
+		LogPlay				log_play			= 0x6004; // 在玩
+		LogRegist			log_regist			= 0x6005; // 注册
+		LogChipJournal		log_chip_journal	= 0x6006; // 筹码流水
+		LogLogin			log_login			= 0x6007; // 登录
+		LogLogout			log_logout			= 0x6008; // 登出
+		LogGameLog			log_game_log		= 0x6009; // 牌局日志
+		LogGameInfoLog		log_game_info_log	= 0x600A; // 牌桌信息
+		LogTeaBarChipsFlow	log_tea_bar_chips_flow = 0x600B;//茶馆金流
+		LogAtPlay			log_at_play			= 0x600C; // 各服务在玩
+		LogTableInfoLog		log_table_info_log = 0x600D; // 打点数据 牌桌信息
+		LogTablePlayerLog	log_table_player_log = 0x600E; // 打点数据 用户信息
+		LogCreateTable		log_create_table			= 0x600F; // 创建房间
+		LogDiamondFlow 		log_diamond_flow 	= 0x6010;	//砖石流水
+		LogBonusFlow		log_bonus_flow		= 0x6011;	//奖金流水
+		LogSkipMatchLevelAndStateFlow log_skipmatch_level_and_state_flow 	= 0x6012;	//等级和状态变更流水
+		LogSkipMatchTotalWinNum log_skipmatch_total_win_num = 0x6013;	//历史总通关次数的变更
+		LogTotalBonus		log_total_bonus		= 0x6014;	//历史总奖金变更
+		LogCoinsFlow		log_coins_flow		= 0x6015;	//金币流水
+		
+		//茶馆start 0x8001 ~ 0x8100
+		CSRequestCreateTeaBar cs_request_create_tea_bar = 0x8001;//请求创建茶馆
+		CSResponseCreateTeaBar cs_response_create_tea_bar = 0x8002;//回复创建茶馆
+		CSRequestEnterTeaBar cs_request_enter_tea_bar = 0x8003;//请求进入茶馆
+		CSResponseEnterTeaBar cs_response_enter_tea_bar = 0x8004;//回复进入茶馆
+		CSRequestGetTeaBarUserList cs_request_get_tea_bar_user_list = 0x8005;//请求茶馆成员列表
+		CSResponseGetTeaBarUserList cs_response_get_tea_bar_user_list = 0x8006;//回复茶馆成员列表
+		CSRequestAgreeUserDropTeaBar cs_request_agree_user_drop_tea_bar = 0x8007;//群主同意玩家退出茶馆与否
+		CSResponseAgreeUserDropTeaBar cs_response_agree_user_drop_tea_bar = 0x8008;//回复群主同意玩家退出茶馆与否
+		CSRequestApplyJoinTeaBar cs_request_apply_join_tea_bar = 0x8009;//请求申请加入茶馆
+		CSResponseApplyJoinTeaBar cs_response_apply_join_tea_bar = 0x800A;//回复申请加入茶馆
+		CSNotifyTeaBarCommMessage cs_notify_tea_bar_comm_message = 0x800B;//通知茶馆通用消息
+		CSRequestAgreeUserJoinTeaBar cs_request_agree_user_join_tea_bar = 0x800C;//群主同意玩家加入茶馆与否
+		CSResponseAgreeUserJoinTeaBar cs_response_agree_user_join_tea_bar = 0x800D;//回复群主同意玩家加入茶馆与否
+		CSRequestApplyDropTeaBar cs_request_apply_drop_tea_bar = 0x800E;//玩家请求退出茶馆
+		CSResponseApplyDropTeaBar cs_response_apply_drop_tea_bar = 0x800F;//回复玩家退出茶馆
+		CSRequestTeaBarList cs_request_tea_bar_list = 0x8010;//请求茶馆列表
+		CSResponseTeaBarList cs_response_tea_bar_list = 0x8011;//回复茶馆列表
+		SSNotifyTeaBarTableGameOver ss_notify_teabar_table_game_over = 0x8012;
+		SSNotifyTeaBarTableGameStart ss_notify_teabar_table_game_start = 0x8013;
+		SSNotifyTeaBarTablePlayerNum ss_notify_teabar_table_player_num = 0x8014;//刷新茶馆桌子人数
+		CSRequestTeaBarInfo cs_request_tea_bar_info = 0x8015;//请求茶馆信息
+		CSResponseTeaBarInfo cs_response_tea_bar_info = 0x8016;//回复茶馆信息
+		CSNotifyTeaBarHasNewMessage cs_notify_tea_bar_has_new_message =  0x8017;//通知茶馆有新消息
+		CSRequestTeaBarMessage cs_request_tea_bar_message = 0x8018;//请求茶馆消息
+		CSResponseTeaBarMessage cs_response_tea_bar_message = 0x8019;//回复茶馆消息
+		CSRequestPutChipsToTeaBar cs_request_put_chips_to_tea_bar = 0x801A;//请求放入房卡到茶馆
+		CSResponsePutChipsToTeaBar cs_response_put_chips_to_tea_bar = 0x801B;//回复放入房卡到茶馆
+		CSNotifyJoinTeaBarResult cs_notify_join_tea_bar_result = 0x801C;//通知加入茶馆结果
+		CSRequestModifySettleNum cs_request_modify_settle_num = 0x801D;//请求修改结算次数
+		CSResponseModifySettleNum cs_response_modify_settle_num = 0x801E;//回复修改结算次数
+		CSRequestRemoveUser cs_request_remove_user = 0x801F;//请求移除用户
+		CSResponseRemoveUser cs_response_remove_user = 0x8020;//回复移除用户
+		SSNotifyTeaBarTableNotExist ss_notify_tea_bar_table_not_exist = 0x8021;//room通知茶馆桌子不存在
+		CSNotifyDropTeaBarResult cs_notify_drop_tea_bar_result = 0x8022;//退出茶馆请求结果
+		CSRequestModifyTeaBarDesc cs_request_modify_tea_bar_desc = 0x8023;//请求修改茶馆详情
+		CSResponseModifyTeaBarDesc cs_response_modify_tea_bar_desc = 0x8024;//回复修改茶馆详情
+		CSRequestFreeTeaBar cs_request_free_tea_bar = 0x8025;//请求解散茶馆
+		CSResponseFreeTeaBar cs_response_free_tea_bar = 0x8026;//回复解散茶馆
+		CSNotifyUserRemoveOutTeaBar cs_notify_user_remove_out_tea_bar = 0x8027;//通知玩家被移除茶馆
+		CSRequestStatisticsTableRecordList cs_request_statistics_table_record_list = 0x8028;//请求已结束的桌子列表，最多保留2天的记录
+		CSResponseStatisticsTableRecordList cs_response_statistics_table_record_list = 0x8029;//回复已结束的桌子列表，最多保留2天的记录
+		CSRequestTeaBarTableStatistics cs_request_tea_bar_statistics = 0x802A;//请求茶馆大结算统计信息
+		CSResponseTeaBarTableStatistics cs_response_tea_bar_statistics = 0x802B;//请求茶馆大结算统计信息
+		CSRequestTeaBarTableSettle cs_request_tea_bar_table_settle = 0x802C;//请求茶馆桌子结算
+		CSResponseTeaBarTableSettle cs_response_tea_bar_table_settle = 0x802D;//回复茶馆桌子结算
+		SSRequestTransferTeaBar ss_request_transfer_tea_bar = 0x802E;//请求转让茶馆
+		GMRequestQueryTeaBarUserList gm_request_query_teabar_user_list = 0x8031;//gm查询茶馆所有uid
+		GMResponseQueryTeaBarUserList gm_response_query_teabar_user_list = 0x8032;//茶馆返回所有uid
+		CSRequestChangeTeabarCreateInfo cs_request_change_teabar_create_info = 0x8033;//请求录入茶馆创建房间信息
+		CSResponseChangeTeabarCreateInfo cs_response_change_teabar_create_info = 0x8034;//回复录入茶馆创建房间信息
+		//茶馆end
+		
+		//比赛场0x9001-0x9100
+		CSRequestQuickMatch		cs_request_quick_match = 0x9001; //请求快速比赛
+		CSResponseQuickMatch    cs_response_quick_match = 0x9002;
+		
+		//闯关0x9101-0x9200
+		SSRequestRobotJoinMatch 	ss_request_robot_join_match = 0x9101;	//请求机器人加入闯关
+	}
+}
+
+message CSRequestQuickMatch
+{
+	optional int32 ttype = 1;//桌子类型
+	optional int32 match_session_id = 2; //比赛类型
+	optional CSCost cost = 3;//门票类型
+}
+
+message CSCost
+{
+	optional int32 cost_type = 1[default = 1];  // 1: 房卡
+	optional int32 cost_num = 2;
+}
+
+message CSRequestLeaveMatch
+{
+	optional bool is_leave = 1[default = true];
+}
+message CSResponseLeaveMatch
+{
+	optional ENMessageError result = 1;
+}
+
+message CSResponseQuickMatch
+{
+	optional ENMessageError result = 1;
+	optional int64 tid = 2;
+	optional int32 game_svid = 3;//服务器id
+	optional int32 ttype = 4;//桌子类型
+	optional int32 match_session_id = 5;
+	optional int32 postype = 6;
+}
+
+message CSRequestChangeTuoGuanState
+{
+	optional bool tuo_guan_state = 1;
+}
+message CSResponseChangeTuoGuanState
+{
+	optional ENMessageError result = 1;
+	optional bool tuo_guan_state = 2;
+}
+message CSNotifyTuoguanInfo
+{
+	optional bool is_tuo_guan = 1[default = false];
+	optional int32 seat_index = 2;
+}
+
+////////////////////////////////////////////////////////////
+// 路由信息
+////////////////////////////////////////////////////////////
+
+message PBRoute
+{
+	optional int32 source = 1;		//请求源
+	optional int32 source_id = 2;
+	optional int32 destination = 3;	//请求目的地址
+	optional int32 des_id = 4;
+	optional int32 session_id = 5;	
+	optional ENMessageType mtype = 6;
+	optional int64 uid = 7;
+	optional ENRouteType route_type	= 8;
+	optional int32 groupid = 9;
+}
+
+// vim:ts=4:sw=4:et:

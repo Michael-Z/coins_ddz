@@ -1,0 +1,561 @@
+import "poker_common.proto";
+
+message PBBPlayerPositionInfo
+{
+	optional int32 pos_type = 1;	// ENPlayerPositionType
+	optional int64 table_id = 2;
+	optional int32 gamesvrd_id = 4;
+}
+
+message PBTableConfig
+{
+	optional ENTableType ttype = 1;
+	optional string name = 2;
+	optional int32 round = 3; //局数限制
+	optional int32 score_limit = 4;
+	optional int32 joker_num = 5;
+	optional int32 win_limit = 6;//起胡番数
+	optional int32 luckly_reward = 7;//喜钱数 不开启喜钱填0
+	optional bool enable_ting = 8;
+	optional int32 seat_num = 9;
+	optional bool delegate = 10; //代开房模式
+	optional string delegate_nick = 11; //代理昵称
+	optional int64 owner = 12; //用户ID
+}
+// 放炮罚 房间配置
+message PBFpfTableConfig
+{
+	optional ENTableType ttype = 1;
+	optional int32 max_line = 2; // 封顶胡息	封顶颗数
+	optional int64 creator_uid = 3;	// 房主
+
+	optional int32 cost = 4;	// 房卡消耗
+	optional int32 round  = 5;	// 配置局数
+	optional int32 pay_type = 6;	// 房卡扣除方式 0为创建者出 1为均摊房卡
+	optional bool is_jiadi = 7;		// 是否加底
+	optional bool is_fangpao_double = 8;	// 是否放炮包陪
+	optional bool is_zimo_double = 9;		// 是否自摸加倍
+	optional bool is_gui = 10;				// 是否带归
+	optional int32 quan_num = 11;			// 圈数		1-半圈 2-一圈
+	optional bool is_haidi = 12;			// 是否海底
+	optional bool is_piaohu = 13;			// 是否飘胡
+	optional bool is_sishou = 14 [default = true];			// 是否死守
+	optional int32 seat_num = 15 [default = 3]; // 
+	optional bool is_luanhu = 16;            //是否乱胡
+	optional bool is_genghu = 17;			 //是否梗胡
+	optional bool is_chajiao = 18;           //是否查叫
+	optional int32 multiple_level = 19; //结算分数倍数
+
+}
+
+
+message TeaBarBriefData
+{
+	optional int64 tbid = 1;//茶馆id
+	optional string tbname = 2;//茶馆名字
+	optional int64 master_uid = 3;//群主uid
+	optional int32 wait_table_num = 4;//等待开局的桌子数
+	optional int64 chips = 5;//群主放入房间的房卡
+	optional int32 pay_type = 6;//茶馆支付方式
+}
+
+message PBUserTeaBarData
+{
+	repeated TeaBarBriefData brief_data = 1;//简要信息
+}
+
+// 用户热点数据
+message PBUser
+{
+	optional int64 uid = 1;
+	optional int64 chips = 2;	//筹码
+	optional PBBPlayerPositionInfo pos = 3;	//位置信息
+	optional int32 hallsvid = 4;	//服务器内部使用
+	optional string nick = 5;	//
+	optional string	pic_url	= 6;
+	optional int32 acc_type = 7;
+	optional int32 channel	= 8;
+	optional int32 limit = 9;
+	repeated string accounts = 10; //多账号绑定
+	optional int64 create_table_id = 11;
+	optional string last_login_ip = 12;
+	optional PBTableConfig tconf = 13;
+	optional int32 gender = 14 ; //性别
+	optional PBFpfTableConfig fpf_conf = 15; // 放炮罚桌子配置
+	optional int32 roletype = 16; //角色类型 (ENRoleType)
+	optional PBDSSTableConfig dss_conf = 17; // 斗十四牌桌配置
+	optional PBSDRTableConfig sdr_conf = 18; 
+	optional int64 regist_time = 19 [default = 0];
+	optional string items_info = 20;	//玩家物品信息
+	
+	//比赛场相关
+	repeated PBUserJoinMatchInfo join_match_info = 100;
+	//闯关
+	optional PBBPlayerPositionInfo skipmatch_pos 	= 200;	//闯关位置信息
+	optional int64 diamond							= 201;	//钻石
+	optional float bonus 							= 202;	//奖金	
+	optional float total_bonus 						= 203;	//总奖金
+	//金币场
+	optional PBBPlayerPositionInfo coin_pos 		= 204;	//金币场位置信息
+	optional int64 coins 							= 205;	//金币
+}
+
+message PBUserJoinMatchInfo
+{
+	optional ENTableType game_type = 1;
+	optional int32 match_session = 2[default = 0]; //已经参加的届数
+}
+
+message PBUserSkipMatchInfo
+{
+	repeated PBUserSkipMatchInfoItem skip_match_info_item 	= 1;
+	optional int32 skipmatch_total_win_num 					= 2;//历史总的赢局
+}
+
+message PBUserSkipMatchInfoItem
+{
+	optional int32 skipmatch_type 						= 1;//匹配的游戏类型
+	optional int32 old_skipmatch_level 					= 2[default = 1];//上一次的闯关等级
+	optional int32 skipmatch_level 						= 3[default = 1];//闯关的等级（应该进入哪个等级的）
+	optional int32 skipmatch_state 						= 4;//闯关的状态
+	optional int64 lately_session_id 					= 5;//最近的session的id	
+	optional int32 skipmatch_total_win_num_on_type 		= 6;//历史总的赢局
+	repeated PBUserSkipMatchResultFlow result_flows 	= 7;//闯关结果流
+	optional int32 skipmatch_need_share_num 			= 8;//失败之后分享的次数
+	optional int32 skipmatch_need_diamond_num 			= 9;//需要的砖石数目
+	optional int32 skipmatch_success_skip_level_num 	= 10;//成功向上跳级的次数
+	optional int32 skipmatch_game_num 					= 11;//一共游戏的次数
+	optional bool  lately_session_has_win_or_lose		= 12;//最近这场比赛是否有输赢
+}
+
+message PBUserSkipMatchResultFlow
+{
+	optional int64 session_id 							= 1;//session_id
+	optional int32 skipmatch_level_change_val 			= 2;//本次level的改变
+	optional int32 skipmatch_level_after_change 		= 3;//本次变更后的level		
+	optional int32 skipmatch_state 						= 4;//本次状态
+	optional int32 reason 								= 5;//变更原因
+	optional int32 is_over								= 6;//该session是否已经结束
+}
+
+message PBUserScoreInfo
+{
+	optional int64 uid = 1;
+	optional string nick = 2;
+	optional int32 score = 3;
+	optional string role_pic_url = 4;
+	optional int32 rank = 5; //比赛场排名
+}
+
+message PBRoundResult
+{
+	optional int32 round_index = 1;
+	optional int64 stamp = 2;
+	repeated PBUserScoreInfo scores = 3;
+	optional int32 flow_size = 4;
+}
+
+message PBUserWeekGameInfo
+{
+	optional int32 time_stamp = 1;
+	optional int32 total_rounds = 2;
+	optional int32 win_rounds = 3;
+}
+
+message PBGameRecord
+{
+	optional int64 recordid = 1;
+	optional int64 tid = 2;
+	optional int64 stamp = 3;
+	repeated PBUserScoreInfo final_user_scores = 4;
+	repeated PBRoundResult round_results = 5;
+	optional ENTableType game_type = 6 [default = EN_Table_LZMJ];
+}
+
+message PBUserRecord
+{
+	repeated PBGameRecord records = 1;
+	repeated PBGameRecord fpf_records = 2;
+	repeated PBGameRecord dss_records = 3;
+	repeated PBGameRecord sdr_records = 4;
+	optional PBUserWeekGameInfo user_last_week_game_info = 5;
+	optional PBUserWeekGameInfo user_current_week_game_info = 6;
+}
+
+message PBSeatStatistics
+{
+	optional int32 index = 1;
+	optional int32 jokereward = 2;
+	optional int32 max_win = 3;
+	optional int32 max_los = 4;
+	optional int32 final = 5;
+	optional string nick = 6;
+	optional string pic_url = 7;
+	optional int64 uid = 8;
+}
+
+message PBTableStatistics
+{
+	repeated PBSeatStatistics seat_statistics_list = 1;
+	optional int32 best_winner = 2; //大赢家
+	optional int32 best_score = 3; //大赢家最大分
+}
+
+message PBDelegateTableInfo
+{
+	optional int64 tid = 1; //桌子ID 
+	optional PBTableConfig conf = 2;	//桌子配置
+	optional int32 state = 3;	//桌子状态
+	optional PBTableStatistics statistics = 4;  //统计
+	optional int32 stamp = 5; //创建时间
+}
+
+message PBUserTableInfo
+{
+	repeated PBDelegateTableInfo running_table_list = 1;
+	repeated PBDelegateTableInfo closed_table_list = 2;
+}
+
+
+//茶馆
+message PBTeaBarUser
+{
+	optional int64 uid = 1;//玩家uid
+	optional string name = 2;//玩家名字
+	optional string url = 3;//玩家头像
+	optional int32 join_time = 4;//加入时间
+	optional int32 apply_time = 5;//申请时间
+}
+
+message PBTeaBarTable
+{
+	optional int64 tid = 1;//桌子id
+	optional PBSDRTableConfig conf = 2;//桌子配置
+	optional int32 player_num = 3;//玩家数
+	optional bool if_start = 4;//是否开始
+	optional int64 owner_uid = 5;//房主ID
+	optional string owner_name = 6;//房主名字
+	optional int32 create_time = 7;//房间创建时间
+	optional int64 statistics_id = 8;//统计id
+	optional int32 statistics_time = 9;//统计时间
+	optional bool if_settled = 10;//是否已经结算
+	optional int64 best_uid = 11;//大赢家ID
+	optional string best_name = 12;//大赢家名字
+}
+
+message PBTeaBarData
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional string tbname = 2;//茶馆名字
+	optional string desc = 3;//茶馆详情
+	optional int64 master_uid = 4;//群主uid
+	optional string master_name = 5;//群主名字
+	optional string master_url = 6;//群主头像
+	repeated PBTeaBarUser users = 7;//群员列表
+	repeated PBTeaBarTable tables = 8;//桌子列表
+	repeated PBTeaBarApplyMsg apply_join_msg_list = 9;//申请加入信息
+	repeated PBTeaBarApplyMsg apply_drop_msg_list = 10;//申请退出信息
+	repeated PBDateTeaBarUserGameRecordList record_list = 11;//每日游戏记录，存储60天
+	optional int32 last_active_time_stamp = 12;//上一次活跃时间搓
+	repeated PBDateTeaBarTableRecordList table_record_list = 13;//每日桌子记录，存储2天
+	optional int32 pay_type = 14;//支付方式
+	repeated TeabarRoomCreateInfo teabar_room_create_info = 15;// 创建房间信息
+}
+
+message TeabarRoomCreateInfo
+{
+	optional int32 game_type = 1;// 游戏类型
+	optional string create_info = 2;// 创建房间字段
+}
+
+message PBDateTeaBarTableRecordList
+{
+	optional int32 time_stamp = 1;//时间搓
+	repeated PBTeaBarTable tables = 2;//桌子列表
+}
+
+//每日游戏记录列表
+message PBTeaBarUserGameRecord
+{
+	optional int64 uid = 1;//玩家uid
+	optional int32 create_table_num = 2;//开房次数
+	optional int32 play_num = 3;//游戏次数
+	optional int32 best_score_num = 4;//大赢家次数
+	optional int32 settle_num = 5;//结算次数
+}
+
+message PBDateTeaBarUserGameRecordList
+{
+	optional int32 time_stamp = 1;//时间搓
+	repeated PBTeaBarUserGameRecord user_list = 2;//玩家游戏记录列表
+	optional int32 create_table_num = 3;//开房总数
+	optional int64 cost_chips = 4;//消耗房卡总数
+}
+
+enum ENTeaBarMessageType
+{
+	EN_Tea_Bar_Message_Type_Apply_Jion = 1;//申请加入茶馆
+	EN_Tea_Bar_Message_Type_Apply_Drop = 2;//申请退出茶馆
+}
+
+//申请茶馆的信息
+message PBTeaBarApplyMsg
+{
+	optional PBTeaBarUser user = 1;//申请玩家信息
+}
+
+message PBTeaBarCommMessage
+{
+	optional int32 msg_type = 1;//消息类型 
+	optional PBTeaBarApplyMsg apply_join_msg = 2;//申请加入茶馆的信息
+	optional PBTeaBarApplyMsg apply_drop_msg = 3;//申请退出茶馆的信息
+}
+
+
+//茶馆牌局详细统计
+message PBTeaBarTableDetailStatistics
+{
+	optional int64 tid = 1; //桌子ID 
+	optional PBSDRTableConfig conf = 2;//桌子配置
+	optional PBTableStatistics statistics = 3;//统计
+}
+
+//茶馆
+
+// ----------------------------------------------------------------------------------
+message PBUserDataField
+{
+	oneof kv_union
+	{
+		PBUser			user_info	= 1;
+		PBUserRecord 	user_record = 2;
+		PBUserTableInfo user_table_info = 3;
+		PBUserTeaBarData user_tea_bar_data = 4;
+		PBUserGameData 	user_game_data  = 5;
+	}
+}
+
+message PBUserData
+{
+	optional PBUser				user_info	= 1;
+	optional PBUserRecord		user_record	= 2;
+	optional PBUserTableInfo 	user_table_info = 3;
+	optional PBUserTeaBarData   user_tea_bar_data = 4;
+	optional PBUserGameData 	user_game_data = 5;
+}
+
+message PBUserGameDataField
+{
+	oneof kv_union
+	{
+		PBUserSkipMatchInfo user_skip_match_info = 1;
+	}
+}
+
+message PBUserGameData
+{
+	optional PBUserSkipMatchInfo user_skip_match_info = 1;
+}
+
+// user_info更新key映射
+enum ENUserField
+{
+	EN_DB_Field_Chips = 0;
+	EN_DB_Field_POS = 4;
+	EN_DB_Field_Hsvid = 5;
+	EN_DB_Field_Nick = 6;
+	EN_DB_Field_Pic_Url = 9;
+	EN_DB_Field_Limit	=	12;
+	EN_DB_Field_Create_Table = 13;
+	EN_DB_Field_IP	= 14;
+	EN_DB_Field_Conf = 15;
+	EN_DB_Field_Gender = 16;
+	EN_DB_Field_Fpf_Conf = 17;
+	EN_DB_Field_RoleType = 18;
+	EN_DB_Field_Dss_Conf = 19;
+	EN_DB_Field_Sdr_Conf = 20;
+	EN_DB_Field_Items_Info = 21;		//玩家的物品
+
+
+	
+	//茶馆
+	EN_DB_Field_TeaBar_Brief = 101;//茶馆简要信息
+	EN_DB_Field_TeaBar_Chips = 102;//茶馆金流
+	EN_DB_Field_TeaBar_Wait_Table_Num = 103;//等待开局的桌子数
+	EN_DB_Field_TeaBar_Pay_Type = 104;//茶馆支付方式
+	
+	//闯关
+	EN_DB_Field_Skipmatch_POS	= 200;	//闯关的位置
+	EN_DB_Field_Diamond			= 201;	//砖石
+	EN_DB_Field_Skipmatch_Level	= 202;	//闯关等级
+	EN_DB_Field_Skipmatch_State = 203;	//闯关的状态
+	EN_DB_Field_Bonus 			= 204;	//奖金
+	
+	//金币场
+	EN_DB_Field_Coin_POS 		= 205;	//金币场位置
+	EN_DB_Field_Coin			= 206;	//金币
+}
+
+enum ENUserRecordFiled
+{
+	EN_DB_Field_Record = 1;
+	EN_DB_Field_Fpf_Record = 2;
+	EN_DB_Field_Dss_Record = 3;
+	EN_DB_Field_Sdr_Record = 4;
+}
+
+enum ENUserTableInfo
+{
+	EN_DB_Field_Table_Running = 1; //
+	EN_DB_Field_Table_Closed = 2; //
+}
+
+// 更新策略
+enum ENUpdateStrategy
+{
+	EN_Update_Strategy_Replace = 0;
+	EN_Update_Strategy_Inc = 1;
+	EN_Update_Strategy_Add	= 2; // repeated add
+	EN_Update_Strategy_Del	= 3; // repeated del
+}
+
+// =============================== 斗十四 ====================================
+// 房间配置
+message PBDSSTableConfig
+{
+	optional ENTableType ttype = 1;
+	optional int64 creator_uid = 2;	// 房主
+	optional int32 round = 4;	// 配置局数
+	optional int32 cost = 5;	// 房卡消耗
+	optional int32 pay_type = 6;	// 房卡扣除方式 0为创建者出 1为均摊房卡
+	optional int32 seat_num = 7 [default = 3];
+	optional int32 max_line = 8; // 分数封顶
+	optional int32 play_type = 9; // 0->硬打  1->软打   ZJ 0:五门红 1:七门红   PX:计番方式 0:梯番 1:滚番 LZ: 0：点炮赔3家 1：点炮加一番
+	optional bool  is_2_5_ting = 10;	// 是否二五做听用牌
+	optional int32 max_multiple = 11 [default = 3]; // 番数封顶
+	optional int32 caishen_num = 12;	// 财神数量
+	optional int32 game_play_type = 13;  // 游戏玩法 0:乱十八 1:软十八 2:硬考考	3:24胡JY 4:30胡JY PX 0:丁斧玩法 1:硬考考玩法 梯番 滚番
+	optional int64 tbid = 14;//茶馆id，茶馆创建房间时有效
+	optional int64 master_uid = 15;//茶馆群主id，茶馆创建房间时有效
+	optional int32 tb_pay_type = 16;//茶馆支付方式	
+	optional bool  is_piao =17;
+	optional bool is_dang =18 ; //有挡或者无挡
+	optional int32 area_type = 19[default = 0]; //大邑玩法选择 1:主城区 0:花水湾
+	optional int32 piao_type = 20[default = 0]; //大邑 1:滚翻 2：梯番
+	optional int32 tingyong_num = 21;	// 听用数量 注意，不一定指的就是听用牌的数量
+	optional int32 game_type_1 =22;
+	optional bool if_dian_pao_cheng_bao = 23;//是否点炮承包
+	optional bool if_3_hei_kan_suan_fan = 24;//是否三黑坎算番
+	optional bool if_can_wan_jiao = 25;//是否允许弯叫
+	optional bool if_has_18_lan = 26;//是否有十八烂
+	optional bool if_xiao_jia_cheng_bao = 27;//是否小家承包
+	optional int32 gui_num = 28; //鬼牌的数目
+	optional bool is_jin_20 = 29 ; //金20
+	optional bool is_dai_gou_fan = 30 ; //带勾番
+
+	optional bool is_xiao_qi_dui = 31 ;//小七对
+	optional bool if_can_hu_tian_di = 32;//是否可以胡天地胡
+	optional int32 max_tuo_shu = 33 ; // 满坨数
+	optional int32 piao_dot = 34 ;//漂点
+	optional bool is_ba_wang_zhuang = 35;//霸王庄
+	optional bool if_has_si_gen_tou = 36; //是否有四根头
+}
+
+// =============================== 上大人 ====================================
+// 房间配置
+message PBSDRTableConfig
+{
+	optional int32 ttype = 1;		// ENTableType
+	optional int64 creator_uid = 2;	// 房主
+	optional int32 round = 3;	// 配置局数
+	optional int32 cost = 4;	// 房卡消耗
+	optional int32 pay_type = 5;	// 房卡扣除方式 0为创建者出 1为均摊房卡
+	optional int32 seat_num = 6 [default = 3];
+	optional int32 max_line = 7; // 分数封顶
+	optional int32 max_multiple = 8 [default = 3]; // 番数封顶
+
+	optional int64 tbid = 10;//茶馆id，茶馆创建房间时有效
+	optional int64 master_uid = 11;//茶馆群主id，茶馆创建房间时有效
+	optional int32 tb_pay_type = 12;//茶馆支付方式	
+
+	optional int32 qiang_type = 13;	// 算枪方式 0-上七八可 1-见红抢 2-夹夹枪
+	optional bool has_piao = 14;	// 利川_飘
+	optional int32 zimo_score = 15;	// 自摸加几分，不加分就0
+	optional int32 di_score = 16;	// 底分
+	optional bool is_dai_kan_mao = 17;	// 是否带坎带卯
+	optional int32 jing_hu_score = 18;	// 精牌多少胡起胡
+	optional bool is_fangpao_bao_pei = 19;	// 是否放炮包赔
+	optional bool is_dao_jin = 20;	// 是否可以倒进
+	optional bool wu_ba_bu_peng = 21 [default = false];
+	optional bool du_kan_bu_chai = 22 [default = false];
+	optional bool is_chi_re = 23;	// 吃热玩法
+	optional int32 qi_hu = 24;	// 起胡 1:21 2:31
+	optional bool is_yi_bu_dong_er_bu_dong = 25;  //一不动二不动玩法
+	optional bool is_du_gang_jiang_zhao = 26; // 独杠降招
+	optional bool is_long_ke_gua_long = 27; // 龙可挂龙
+	optional int32 count_way = 28; // 算分方法 0：加法 1：乘法
+	optional bool is_ke_hu_bu_zhui = 29;	// 可胡不追
+	optional int32 pao_fen = 30[default = 0];	// 炮分
+	optional bool you_lai_bi_bai = 31;	//有赖必摆
+	optional bool luo_di_sheng_hua = 32[default = true];	//落地生花
+	optional bool is_master_delegate = 33;//是否是茶馆主人代开
+	optional int32 max_bomb = 34;	// 炸弹封顶
+	optional bool is_last_winner_dealer = 35;	//是否是黑桃3先出
+	optional bool you_da_bi_chu		= 36;	//有大必出
+	optional bool able_two_lain_dui	= 37;	//可以2连对
+	optional bool bomb_3_a			= 38;	//3a是炸弹
+	optional int32 special_score = 39[default = 18];	//利川 2人分数配置
+	optional int32 game_play_type = 40;	// 单选玩法类型 0->定张 1->定张定恰定光 2->一癞到底 3->多癞
+	optional int32 deal_handcard_type = 41; //发牌类型 0->一次发完 1->两次发完
+	optional int32 laizi_num = 42; //癞子数量
+	repeated int32 game_play_type_2 = 43;	// 多选玩法类型 0->抬杠 1->杠上炮 2->禁止养痞 3->打癞禁胡 4->打痞禁胡
+	optional int32 game_type_on_3_seat_size = 44;	//1为牛3玩法（3人玩法），2为双牛鬼玩法（3人玩法）
+	optional bool shuang_niu_tou_xiang = 45;	//双牛投降（4人玩法）
+	optional int32 shuang_niu_liang_pai = 46;	//双牛亮牌（4人玩法）	//-1 为不亮，1为失败每家6分（双牛赢18分），2为失败每家4分（双牛赢12分）
+	optional bool qiang_an_mao			= 47;	//抢暗卯
+		optional bool is_dahua  		= 48;   // 是否打花玩法
+	optional bool is_shiduihu		= 49;	// 是否可以十对胡
+	optional bool is_yipaoduoxiang  = 50;	// 是否一炮多响
+	optional int32 hupai_score		= 51;	// 多少胡起胡
+	optional int32 piao_score 		= 52;	// 漂分
+	optional int32 suanhua_type 	= 53;	// 算花 ：十花（0） 溜花（1）
+	optional bool can_jian_pai 	= 54[default = true];	// 是否可以捡牌
+	optional bool has_boom 	= 55;	// 是否有炸弹
+	optional bool pingfan_fanfan 	= 56;	// 算分：0是平番 1是翻番
+	optional bool is_free_game = 100[default = false]; //是否为试玩场
+	optional bool is_huitouqing = 101[default = false];
+	optional bool can_see_dipai = 102;  // 是否展示底牌
+	optional int32 piao_type = 103;//利川_飘
+	optional bool is_da_gong = 104;//百胡 打拱
+	optional bool able_mo_zhang_hu = 105[default = true];//最后一张能不能胡
+	
+	//比赛场相关
+	optional int32  match_session_id	= 200;	//比赛场次id
+	//闯关
+	optional int32 skipmatch_level 		= 300;	//闯关等级
+	optional int32 level 				= 301;	//等级（金币场）
+}
+
+message PBSDRTableResult
+{
+	optional int32 win_index = 1;
+	optional int32 seat_index = 2;
+}
+
+//------------------------------------------------闯关
+enum ENUserGameInfoFiled
+{
+	EN_User_Game_Info_Skip_Match = 1;
+	EN_User_Game_Info_Coin_Match = 2;
+}
+
+enum ENUserSkipMatchInfoFiled
+{
+	EN_DB_Field_Skip_Match_Info_Level					= 1;
+	EN_DB_Field_Skip_Match_Info_State					= 2;
+	EN_DB_Field_Skip_Match_Info_Total_Win_Num 			= 3;//闯7局的次数
+	EN_DB_Field_Skip_Match_Info_Total_Match_Num			= 4;
+	EN_DB_Field_Skip_Match_Info_Init					= 5;//数据初始化
+}
+
+

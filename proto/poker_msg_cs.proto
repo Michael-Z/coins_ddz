@@ -1,0 +1,1450 @@
+import "poker_common.proto";
+import "poker_msg_basic.proto";
+import "poker_data.proto";
+//import "poker_config.proto";
+
+
+message CSRequestLogin
+{
+	optional int32	acc_type	= 1;
+	optional string account		= 2; // 用户名
+	optional string pwd			= 3;
+	optional string token		= 4; // php生成第三方账号token
+	optional int32	hsvid		= 5; // 大厅服务器id
+	optional ENGender gender	= 6; //性别
+	optional string pic_url		= 7; //头像
+	optional string nick		= 8; //昵称
+	optional int64 uid			= 9; //重连带上uid
+	optional string request_list_ip = 10;
+}
+
+message CSResponseLogin
+{
+	optional ENMessageError result = 1;  // 结果
+	optional PBUser user = 2;	//用户信息
+    optional bool   use_heart_beat      = 3;
+    optional int32  heart_beat_interval = 4;
+	optional bool 	is_created = 5; //是否是新用户
+	optional PBUserGameData user_game_data = 6;
+}
+
+message CSNotifyListIP
+{
+	optional string list_ip = 1;
+}
+
+message CSRequestHeartBeat
+{
+}
+
+message CSResponseHeartBeat
+{
+    optional int32 time     = 1;
+}
+
+message CSNotifyPushMessage
+{
+	optional int64 stamp = 1;
+	optional string message = 2;
+}
+
+message CSNotifyRepeatedLogin
+{
+}
+
+message CSRequestCreateTable
+{
+	optional ENTableType ttype = 1;
+	optional string name = 2;
+	optional int32 round = 3; //局数限制
+	optional int32 score_limit = 4;
+	optional int32 joker_num = 5;
+	optional int32 win_limit = 6;//起胡番数
+	optional int32 luckly_reward = 7;//喜钱数 不开启喜钱填0
+	optional bool enable_ting = 8;
+	optional int32 seat_num = 9 [default = 4]; //座位个数
+	optional bool delegate = 10 [default = false];
+}
+
+message CSResponseCreateTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional int64 tid = 2; //桌子ID
+}
+// fpf
+message CSRequestFPFCreateTable
+{
+	optional ENTableType ttype = 1;
+	optional int32 max_line = 2; // 封顶胡息
+	optional bool is_sishou = 3 [default = true];			// 是否死守
+}
+
+message CSResponseFPFCreateTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional int32 tid = 2; //桌子ID
+}
+// daer
+message CSRequestDaerCreateTable
+{
+	optional ENTableType ttype = 1;
+	optional PBFpfTableConfig conf = 2;
+	optional ENZoneType ztype = 3 [default = EN_Zone_LuZhou];
+}
+
+message CSResponseDaerCreateTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional int32 tid = 2; //桌子ID
+	optional ENTableType ttype = 3 [default = EN_Table_DAER];
+	//optional ENZoneType ztype = 4 [default = EN_Zone_LuZhou];
+}
+
+message CSRequestOnClickAvatar
+{
+	optional int32 uid = 1;
+}
+
+message SCResponseOnClickAvatar
+{
+	optional PBUserWeekGameInfo last_week_game_info = 1;
+}
+
+message CSRequestEnterTable
+{
+	optional int64 tid = 1; //桌子ID
+	optional int32 connect_id = 2; //
+}
+
+message CSResponseEnterTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional CSNotifyTableInfo table_info = 2;
+	optional int32 gamesvrd_id = 3;
+}
+// fpf
+message CSRequestFPFEnterTable
+{
+	optional int32 tid = 1; //桌子ID
+	optional int32 connect_id = 2; //
+}
+message CSResponseFPFEnterTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional CSNotifyTableInfo table_info = 2;
+	optional int32 gamesvrd_id = 3;
+}
+// daer
+message CSRequestDaerEnterTable
+{
+	optional int32 tid = 1; //桌子ID
+	optional int32 connect_id = 2; //
+	//optional ENTableType ttype = 3 [default = EN_Table_DAER];
+	optional ENZoneType ztype = 4 [default = EN_Zone_LuZhou];
+}
+message CSResponseDaerEnterTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional CSNotifyTableInfo table_info = 2;
+	optional int32 gamesvrd_id = 3;
+	optional ENTableType ttype = 4 [default = EN_Table_DAER];
+	//optional ENZoneType ztype = 5 [default = EN_Zone_LuZhou];
+	optional ENPlayerPositionType pos_type = 6 [default = EN_Position_Daer];
+}
+
+message CSNotifyTableInfo
+{
+	repeated PBTableSeat seats 			= 1;  // 座位信息
+    optional ENTableState  state        = 2;  // 游戏状态
+	optional int32 left_tile_num 		= 3;
+	repeated PBMJActionFlow total_action_flows = 4; //操作流
+	optional int32 dealer				= 5;
+	optional int64 tid 					= 6; 
+	optional PBTableConfig	conf		= 7;
+	optional int64 owner				= 8;
+	optional int32 round				= 9;
+	repeated PBUserScoreInfo final_user_scores = 10;
+	optional PBDissolveInfo dissolve_info = 11;
+	// fpf
+	repeated PBFPFTableSeat fpf_seats 			= 21;  // 座位信息
+	optional PBFpfTableConfig	fpf_conf		= 22;
+	optional int32 left_card_num 		= 23;
+	repeated PBFPFActionFlow fpf_total_action_flows = 24; //操作流
+	optional int64 creator_uid = 25;		// 房主
+	optional int32 operation_index = 26;	// 操作玩家index
+	optional int32 dest_card = 27;	// 目标牌
+	optional bool is_mopai = 28;	// 是否为摸的牌
+	optional int32 quan_card = 29;	// 圈牌
+
+	// dss
+	repeated PBDSSTableSeat 	dss_seats 		= 30;  // 座位信息
+	optional PBDSSTableConfig	dss_conf		= 31;
+	repeated PBDSSActionFlow dss_total_action_flows = 32; //操作流
+	optional bool display_anpai = 33;
+	optional int32 xiaojia_index = 34;
+	repeated int32 out_cards = 35; // 总出牌列表
+
+	// sdr
+	repeated PBSDRTableSeat 	sdr_seats 		= 36;  // 座位信息
+	optional PBSDRTableConfig	sdr_conf		= 37;
+	repeated PBSDRActionFlow sdr_total_action_flows = 38; //操作流
+	optional int32	jiang_card = 39; // 将牌
+	optional bool   need_show = 40; 
+	optional int32	fanpai_index = 41;		// 翻牌index
+	optional int32  dealer_index_2 = 42;	//接庄的座位索引
+	
+	repeated int32  dipai_cards = 43;	// 斗地主 底牌
+	optional int32  laizi_card = 44;	// 斗地主 赖子牌
+	optional int32 	joker_card = 45;	//赖子牌
+	optional int32  pizi_card = 46;	// 痞子牌
+	
+	optional int32 operate_period = 47;//操作时长
+	optional int32 ready_wait_period	= 48;	//准备时长
+}
+
+message CSNotifySitDown
+{
+	optional PBTableSeat seat = 1;
+	optional PBFPFTableSeat fpf_seat = 2;
+	optional PBDSSTableSeat dss_seat = 3;
+	optional PBSDRTableSeat sdr_seat = 4;
+}
+
+message CSNotifySeatInfo
+{
+	repeated PBTableSeat seats = 1;
+	repeated PBSDRTableSeat sdr_seats = 2;
+}
+
+message CSNotifyGameStart
+{
+	repeated PBTableSeat seats = 1;
+	optional int32 left_tile_num = 2;
+	optional int32 dealer = 3;
+	optional int32 round = 4;
+	// fpf
+	repeated PBFPFTableSeat fpf_seats = 5;
+	optional int32 left_card_num = 6;
+	optional int32 quan_card = 7;	// 圈牌
+
+	// dss
+	repeated PBDSSTableSeat dss_seats = 8;
+	optional int32 xiaojia_index = 9;
+
+	// sdr
+	repeated PBSDRTableSeat sdr_seats = 10;
+	optional int32 jiang_card = 11; // 将牌
+	
+	// DDZ
+	repeated int32 dipai_cards = 12; // 底牌
+	optional int32 laizi_card = 13; // 癞子牌
+	optional int32 joker_card = 14;	// 赖子牌
+	optional int32 pizi_card = 15;	// 痞子牌
+}
+
+message CSNotifyNextOperation
+{
+	optional int32 operation_index = 1;
+	optional int32 left_tile_num = 2;
+	optional int32 left_card_num = 3; // 剩余牌数量 pfp
+	//optional ENTableState state = 4; 
+}
+
+message CSNotifySeatOperationChoice
+{
+	repeated PBMJAction choices = 1;
+	optional int32 action_token = 2;
+	repeated PBFPFAction fpf_choices = 3; // fpf
+	repeated PBDSSAction dss_choices = 4; // dss
+	repeated PBSDRAction sdr_choices = 5; // sdr
+}
+
+message CSRequestReadyForGame
+{	
+	optional bool state = 1;
+	optional bool is_ming_pai_start = 2;
+}
+
+message CSResponseReadyForGame
+{
+	optional ENMessageError result = 1;
+	optional bool state = 2;
+}
+
+message CSNotifyReadyForGame
+{
+	optional int32 seat_index = 1;
+	optional bool state = 2;
+}
+
+message CSRequestDoAction
+{
+	optional int32 seatid = 1;
+	optional int32 atype = 2;
+	repeated int32 tiles = 3;
+	optional int32 realtile = 4;
+	optional int32 token = 5;
+}
+
+message CSResponseDoAction
+{
+	optional ENMessageError result = 1;
+	optional PBMJAction action = 2;
+}
+// fpf
+message CSRequestFpfDoAction
+{
+	optional int32 seat_index = 1;
+	optional int32 act_type = 2;
+	optional int32 dest_card = 3;
+	repeated int32 cards = 4;
+	optional int32 token = 5;
+	repeated int32 cards_bi_1 = 6;
+	repeated int32 cards_bi_2 = 7;
+}
+// fpf
+message CSResponseFpfDoAction
+{
+	optional ENMessageError result = 1;
+	optional PBFPFAction action = 2;
+}
+
+message CSNotifyActionFlow
+{
+	optional PBMJActionFlow new_action_flow = 1;
+	optional PBMJActionFlow pre_action_flow = 2;
+	
+	optional PBFPFActionFlow new_fpf_action_flow = 3;
+	optional PBDSSActionFlow new_dss_action_flow = 4;
+	optional PBSDRActionFlow new_sdr_action_flow = 7;
+
+	optional bool display_anpai = 5;	// 斗十四暗牌展示开关
+	optional ENTableState state = 6; 
+}
+
+message CSNotifyPlayerDealMJ
+{
+	optional int32 index = 1;
+	optional int32 value = 2;
+}
+// fpf
+message CSNotifyPlayerDealCard
+{
+	optional int32 index = 1;	// seat index
+	optional int32 value = 2;
+	optional bool is_dealer_last_card = 3;	// 庄家最后一张牌
+}
+
+message CSRequestDissolveTable
+{
+	optional bool choice = 1;//选项
+	optional bool is_start = 2;	// 是否为发起解散
+}
+
+message CSResponseDissolveTable
+{
+	optional ENMessageError result = 1;
+}
+
+message CSNotifyDissolveTableOperation
+{
+	optional int64 uid = 1;
+	optional PBDissolveInfo dissolve_info = 2;
+	optional bool vote_down = 3[default = false];
+}
+message CSNotifyDissolveTable
+{
+	optional PBTableStatistics statistics = 1;
+	optional bool auto_dissolve = 2[default = true];
+}
+
+message CSRequestSendInteractiveProp
+{
+	optional int32 destinaion_index = 1;//互动道具
+	optional int32 interaction_id = 2;//互动道具ID
+}
+
+message CSResponseSendInteractiveProp
+{
+	optional ENMessageError result  = 1;
+    optional int64          price   = 2;
+}
+
+message CSNotifyInteractionMessage
+{
+	optional int32 source_index = 1;
+	optional int32 destinaion_index = 2;
+	optional int32 interaction_id = 3;
+}
+
+message CSRequestChat
+{
+	optional ENChatType ctype = 1;
+	optional string message = 2;
+	optional int32 BigFaceChannel = 3;
+	optional int32 BigFaceID = 4;
+}
+
+message CSResponseChat 
+{
+	optional ENMessageError result = 1;
+	optional uint32 title = 2; // 称号 >0 表示对应称号索引
+}
+
+message CSNotifyChat
+{
+	optional int64 uid = 1;
+	optional ENChatType ctype = 2;
+	optional string message = 3;
+	optional int32 BigFaceChannel = 4;
+	optional int32 BigFaceID = 5;
+	optional string nick = 6;
+	optional uint32 title = 7; // 称号 >0 表示对应称号索引
+}
+
+message CSRequestUserRecord
+{
+	optional int32 game_type = 1 [default = 0];	// 0 为麻将 1为放炮罚
+}
+
+message CSResponseUserRecord
+{
+	repeated PBGameRecord records = 1;
+}
+
+message CSRequestTableRecord 
+{
+}
+
+message CSResponseTableRecord
+{
+	optional ENMessageError result = 1;
+	optional PBGameRecord record = 2;
+}
+
+message CSNOtifyPlayerConnectionState
+{
+	optional int32 seat_index = 1;
+	optional int32 connection_state = 2;
+}
+
+message InterEventAutoAction
+{
+	optional PBFPFAction request_action = 1;
+	optional int32 token = 2;
+	optional PBDSSAction dss_request_action = 3;
+	optional PBSDRAction sdr_request_action = 4;
+}
+
+message CSRequestLogoutTable
+{
+	optional int32 reason = 1;
+}
+
+message CSResponseLogoutTable
+{
+	optional ENMessageError result 			= 1;
+	optional PBUserGameData user_game_data 	= 2;
+	optional int32 reason					= 3;
+	optional int32 last_tid 				= 4;	//最近离开的桌子，用于金币场的使用
+}
+
+message CSNotifyLogoutTable
+{
+	optional int32 seat_index 	= 1;
+	optional int32 reason 		= 2;	//原因
+	optional int32 last_tid 	= 3;	//最近离开的桌子，用于金币场的使用
+}
+
+message InterEventOnDoActionOver
+{
+	optional int32 type = 1;	// 1.自己出牌 2.下家操作
+	optional PBFPFAction dest_action = 2;
+	optional PBDSSAction dss_dest_action = 3;
+	optional PBSDRAction sdr_dest_action = 4;
+}
+
+message CSNotifyFPFOutCards
+{
+	optional int32 index = 1;	// 座位号
+	repeated int32	out_cards = 2; // 出牌列表 自己打出去的和自己摸了没人要的
+	optional bool is_napai = 3; // 是否是摸牌触发
+}
+
+message NotifyFPFFinishItem
+{
+	optional int64 uid = 1;
+	optional int32 src_score = 2;		// 原始胡息  四舍五入前的胡息
+	optional int32 total_score = 3;		// 总胡息	 四舍五入后的胡息
+	optional int32 calcu_score = 4;		// 积分		 公式计算后的胡息
+	optional int64 chips = 5;			// 房卡数量
+	optional int32 rank = 6; //比赛场排名
+}
+// fpf 最后结算通知
+message CSNotifyFPFFinish
+{
+	repeated NotifyFPFFinishItem result_list = 1;
+	optional bool is_dissolve_finish = 2;
+}
+
+message CSNotifyChipChange
+{
+	optional int64 cur_chip = 1;
+	optional int64 cur_gold = 2;
+}
+// 弃胡
+message CSRequestFPFAbandonHu
+{
+	
+}
+message CSResponseFPFAbandonHu
+{
+	optional ENMessageError result = 1;
+}
+message CSNotifyFPFAbandonHu
+{
+	optional int32 uid = 1;
+}
+// 更新手牌
+message CSNotifyFPFUpdateCards
+{
+	repeated int32 cards = 1;
+}
+
+message CSRequestUpdateUserInfo
+{
+	optional string		nick_name		= 1; // 昵称
+	optional string 	pic_url			= 2; // 头像
+	optional int32		gender			= 3; // 性别
+}
+
+message CSResponseUpdateUserInfo
+{
+	optional ENMessageError	result	= 1;
+}
+
+message CSRequestTableFlowRecord
+{
+	optional int64 recordid = 1;
+	optional int32 round = 2;
+	optional int32 stamp = 3;
+	optional ENTableType game_type = 4 [default = EN_Table_LZMJ];
+}
+
+message CSResponseTableFlowRecord
+{
+	optional ENMessageError result = 1;
+	optional PBLZMJTableFlowRecordItem record = 2;
+	optional PBDSSTableFlowRecordItem dss_record = 4;
+	optional PBSDRTableFlowRecordItem sdr_record = 5;
+	optional int32 round = 3;
+}
+
+message CSRequestDelegateTableInfo
+{
+	
+}
+
+message CSResponseDelegateTableInfo
+{	
+	optional ENMessageError result = 1;
+	optional PBUserTableInfo delegate_table_info = 2;
+}
+
+message CSRequestDissolveDelegateTable
+{
+	optional int64 tid = 1;
+}
+
+message CSResponseDissolveDelegateTable
+{
+	optional ENMessageError result = 1;
+}
+
+// 扣除房卡
+message InterEventOnGameStart
+{
+	optional int32 uid = 1;
+	optional int32 table_id = 2;
+}
+
+message CSRequestEcho
+{
+	optional string ip = 1;
+	optional int32 port = 2; 
+	optional int32 session_id = 3;
+	optional int32 gtype = 4; //组类型
+	optional string main_key = 5; //主键名 
+}
+
+message CSResponseEcho
+{
+	optional string ip = 1;
+	optional int32 port = 2; 
+	optional int32 session_id = 3;
+	optional int32 gtype = 4; //组类型
+	optional string main_key = 5; //主键名 
+}
+
+message CSRequestConnectIP
+{
+	optional int64 uid = 1;
+	optional string request_connect_ip = 2;
+}
+
+message CSResponseConnectIP
+{
+	optional string conn_ip = 1;
+}
+
+// 客户端主动离线
+message CSRequestOffLine
+{
+	optional bool is_offline = 1; 
+}
+message CSResponseOffLine
+{
+	optional ENMessageError result = 1;
+}
+
+// 解锁玩家
+message InterEventUnlock
+{
+	optional int32 uid = 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+message CSRequestDssCreateTable
+{
+	optional ENTableType ttype = 1;
+	optional PBDSSTableConfig conf = 2;
+	optional ENZoneType ztype = 3 [default = EN_Zone_SiChuan];
+}
+message CSResponseDssCreateTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional int32 tid = 2; //桌子ID
+	optional ENTableType ttype = 3;
+	//optional ENZoneType ztype = 4 [default = EN_Zone_SiChuan];
+	optional int32 ret_tid = 5;	// 在某些进入房间失败的时候，返回正确的房间号
+}
+
+message CSRequestDssEnterTable
+{
+	optional int32 tid = 1; //桌子ID
+	optional int32 connect_id = 2; //
+	optional ENZoneType ztype = 3 [default = EN_Zone_SiChuan];
+}
+message CSResponseDssEnterTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional CSNotifyTableInfo table_info = 2;
+	optional int32 gamesvrd_id = 3;
+	optional ENTableType ttype = 4;
+	optional ENPlayerPositionType pos_type = 6 [default = EN_Position_DSS_Cd];
+	optional int32 ret_tid = 7;	// 在某些进入房间失败的时候，返回正确的房间号
+}
+
+message CSRequestDSSDoAction
+{
+	optional int32 seat_index = 1;
+	optional int32 act_type = 2;
+	optional int32 dest_card = 3;
+	repeated int32 cards = 4;
+	optional int32 token = 5;
+	repeated int32 original_cards = 6;
+	optional bool is_zhao = 7; //是否含招的操作,用于有话说
+	repeated PBDSSBaoInfo bao_info = 8 ;//废弃（客户端repeated结构体不可用）
+	repeated int32 an_kou_cards = 9;//暗扣的牌
+	repeated int32 bao_types = 10;//报牌类型数组
+}
+message CSResponseDSSDoAction
+{
+	optional ENMessageError result = 1;
+	optional PBDSSAction action = 2;
+}
+
+message CSRequestRankListInfo
+{
+	optional ENRankListType ltype = 1;//排行榜类型
+	optional int32 startpos = 2;
+	optional int32 endpos = 3;
+}
+
+message PBRankInfo
+{
+	optional int64 uid		= 1;
+	optional int64 score	= 2;
+	optional int32 rank		= 3;
+	optional string nick	= 4;
+	optional string pic_url	= 5;
+    optional int32  vip_level   = 6;
+}
+message CSResponseRankListInfo
+{
+	optional ENMessageError result = 1;
+	optional ENRankListType ltype = 2;
+	repeated PBRankInfo rank_info_list = 3;
+}
+
+
+//请求桌子详情
+message CSRequestTableDetail
+{
+	optional int64 tid = 1;//桌子ID
+	optional int64 tbid = 2;//如果是茶馆桌子，带上茶馆ID
+	optional ENZoneType ztype = 3 [default = EN_Zone_SiChuan];
+}
+
+message CSTableUserDetail
+{
+	optional int64 uid = 1;//玩家ID
+	optional string name = 2;//玩家名字
+	optional string url = 3;//玩家头像
+}
+
+//回复桌子详情
+message CSResponseTableDetail
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tid = 2;//桌子ID
+	repeated CSTableUserDetail users = 3;//玩家信息
+}
+
+//茶馆start
+
+//请求创建茶馆
+message CSRequestCreateTeaBar
+{
+	optional string name = 1;//茶馆名称
+	optional string desc = 2;//茶馆详情
+	optional int32 pay_type = 3;//茶馆支付方式，参考ENTeaBarPayType
+}
+
+//回复创建茶馆
+message CSResponseCreateTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 create_tbid = 2;//创建的茶馆id
+}
+
+//请求进入茶馆
+message CSRequestEnterTeaBar
+{
+	optional int64 tbid = 1;//茶馆id
+	optional bool is_refresh = 2;//是否是刷新
+}
+
+//回复进入茶馆
+message CSResponseEnterTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+	optional string tbname = 3;//茶馆名字
+	optional int64 master_uid = 4;//群主uid
+	optional string master_name = 5;//群主名字
+	optional string master_url = 6;//群主头像
+	repeated PBTeaBarTable tables = 7;//桌子列表
+	optional int32 user_num = 8;//玩家数量
+	optional int32 max_user_num = 9;//最大玩家数量
+	optional int64 chips = 10;//茶馆房卡数
+	optional bool is_refresh = 11;//是否是刷新
+	optional string desc = 12;//茶馆详情
+	optional int32 pay_type = 13;//茶馆支付方式，参考ENTeaBarPayType
+	repeated TeabarRoomCreateInfo teabar_create_info = 14;// 茶馆创建房间信息
+}
+
+//请求获取茶馆成员列表
+message CSRequestGetTeaBarUserList
+{
+	optional int64 tbid = 1;//茶馆id
+	optional int32 date_type = 2;//日期类型，查看ENTeaBarDateType
+}
+
+message CSTeaBarUser
+{
+	optional int32 index = 1;//索引，如果用户过多，分段返回
+	optional int32 uid = 2;//玩家uid
+	optional string name = 3;//玩家名字
+	optional string url = 4;//玩家头像
+	optional int32 create_table_num = 5;//开房次数
+	optional int32 play_num = 6;//游戏次数
+	optional int32 best_score_num = 7;//大赢家次数
+	optional int32 settle_num = 8;//结算次数
+}
+
+//回复获取茶馆成员列表
+message CSResponseGetTeaBarUserList
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆id
+	repeated CSTeaBarUser users = 3;//成员列表，可分段返回
+	optional int32 date_type = 4;//日期类型，查看ENTeaBarDateType
+	optional bool is_end = 5;//是否到最后
+	optional int32 create_table_num = 6;//创建桌子总数
+	optional int64 cost_chips = 7;//消耗房卡总数
+}
+
+//申请加入茶馆
+message CSRequestApplyJoinTeaBar
+{
+	optional int64 tbid = 1;//茶馆id
+}
+
+//回复申请加入茶馆
+message CSResponseApplyJoinTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆id
+}
+
+//茶馆通用消息
+message CSNotifyTeaBarCommMessage
+{
+	repeated PBTeaBarCommMessage msg_list = 1;//消息列表
+}
+
+//群主同意玩家加入茶馆与否
+message CSRequestAgreeUserJoinTeaBar
+{
+	optional bool if_agree = 1;//是否同意
+	optional int64 tbid = 2;//茶馆id
+	optional int64 uid = 3;//申请人uid
+}
+
+message CSResponseAgreeUserJoinTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional bool if_agree = 2;//是否同意
+	optional int64 tbid = 3;//茶馆id
+	optional int64 uid = 4;//申请人uid
+}
+
+//申请退出茶馆
+message CSRequestApplyDropTeaBar
+{
+	optional int64 tbid = 1;//茶馆id
+}
+
+//回复申请退出茶馆
+message CSResponseApplyDropTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆id
+}
+
+//群主同意玩家离开茶馆与否
+message CSRequestAgreeUserDropTeaBar
+{
+	optional bool if_agree = 1;//是否同意
+	optional int64 tbid = 2;//茶馆id
+	optional int64 uid = 3;//申请人uid
+}
+
+message CSResponseAgreeUserDropTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional bool if_agree = 2;//是否同意
+	optional int64 tbid = 3;//茶馆id
+	optional int64 uid = 4;//申请人uid
+}
+
+//通知群主是否同意你加入茶馆
+message CSNotifyJoinTeaBarResult
+{
+	optional bool if_agree = 1;//是否同意
+	optional int64 tbid = 2;//茶馆id
+	optional string tbname = 3;//茶馆名字
+	optional int64 master_uid = 4;//群主uid
+	optional string master_name = 5;//群主名字
+}
+
+//通知群主是否同意你退出茶馆
+message CSNotifyDropTeaBarResult
+{
+	optional bool if_agree = 1;//是否同意
+	optional int64 tbid = 2;//茶馆id
+	optional string tbname = 3;//茶馆名字
+	optional int64 master_uid = 4;//群主uid
+	optional string master_name = 5;//群主名字
+}
+
+message CSRequestTeaBarList
+{ 
+}
+
+message CSTeaBarBriefData
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional string tbname = 2;//茶馆名字
+	optional int64 master_uid = 3;//群主uid
+	repeated string url = 4;//茶馆前9个玩家图像
+	optional string desc = 5;//茶馆详情
+}
+
+message CSResponseTeaBarList
+{ 
+	optional ENMessageError result = 1;//结果
+	repeated CSTeaBarBriefData brief_data = 2;//茶馆简要数据列表
+	repeated CSTeaBarBriefData recommend_brief_data = 3;//推荐茶馆信息
+}
+
+message CSRequestTeaBarInfo
+{
+	optional int64 tbid = 1;//茶馆id
+}
+
+message CSResponseTeaBarInfo
+{
+	optional ENMessageError result = 1;//结果
+	optional CSTeaBarBriefData brief_data = 2;//茶馆简要信息
+}
+
+//通知有新消息
+message CSNotifyTeaBarHasNewMessage
+{
+	optional int32 tbid = 1;//茶馆id
+}
+
+//请求茶馆消息
+message CSRequestTeaBarMessage
+{
+	optional int64 tbid = 1;//茶馆id
+}
+
+//回复茶馆消息
+message CSResponseTeaBarMessage
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆id
+	repeated PBTeaBarCommMessage msg_list = 3;//消息列表
+}
+
+//请求放入房卡到茶馆
+message CSRequestPutChipsToTeaBar
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int64 addchips = 2;//放入茶馆房卡数
+}
+
+//回复放入房卡到茶馆
+message CSResponsePutChipsToTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+	optional int64 chips = 3;//茶馆房卡总数
+	optional int64 addchips = 4;//放入茶馆房卡数
+}
+
+//请求修改结算次数
+message CSRequestModifySettleNum
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int64 uid = 2;//用户uid
+	optional int32 date_type = 3;//日期类型
+	optional int32 settle_num = 4;//结算次数
+}
+
+//回复修改结算次数
+message CSResponseModifySettleNum
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+	optional int64 uid = 3;//用户uid
+	optional int32 date_type = 4;//日期类型
+	optional int32 settle_num = 5;//结算次数
+
+}
+
+//请求移除玩家
+message CSRequestRemoveUser
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional int64 uid = 2;//用户uid
+}
+
+//回复移除玩家
+message CSResponseRemoveUser
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+	optional int64 uid = 3;//用户uid
+}
+
+
+//请求修改详情
+message CSRequestModifyTeaBarDesc
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional string desc = 2;//茶馆修改后的详情
+	optional int32 pay_type = 3;//支付方式
+}
+
+//回复修改详情
+message CSResponseModifyTeaBarDesc
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+	optional string desc = 3;//茶馆修改后的详情
+	optional int32 pay_type = 4;//支付方式
+}
+
+//请求解散茶馆
+message CSRequestFreeTeaBar
+{
+	optional int64 tbid = 1;//茶馆ID
+}
+
+//回复解散茶馆
+message CSResponseFreeTeaBar
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+}
+
+//通知玩家被移除茶馆
+message CSNotifyUserRemoveOutTeaBar
+{
+	optional int64 tbid = 1;//茶馆ID
+	optional string tbname = 2;//茶馆名字
+}
+
+
+//请求茶馆已结束桌子记录列表，最多保持2天的记录
+message CSRequestStatisticsTableRecordList
+{
+	optional int64 tbid = 1;//茶馆ID
+}
+
+
+message CSTeaBarTableStatistics
+{
+	optional int32 index = 1;//索引，如果用户过多，分段返回
+	optional PBTeaBarTable table = 2;//桌子统计信息
+}
+
+//回复茶馆已结束桌子记录列表，最多保持2天的记录，分段发送
+message CSResponseStatisticsTableRecordList
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆ID
+	repeated CSTeaBarTableStatistics stat_tables = 3;//桌子统计列表
+	optional bool is_end = 4;//是否发送完成
+}
+
+
+//请求茶馆大结算统计信息
+message CSRequestTeaBarTableStatistics
+{
+	optional int64 statistics_id = 1;//统计id 
+}
+
+//请求茶馆大结算统计信息
+message CSResponseTeaBarTableStatistics
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 statistics_id = 2;//统计id 
+	optional PBTeaBarTableDetailStatistics detail = 3;//详情信息
+}
+
+//请求茶馆桌子结算
+message CSRequestTeaBarTableSettle
+{
+	optional int64 tbid = 1;//茶馆id 
+	optional int64 statistics_id = 2;//统计id 
+}
+
+//回复茶馆桌子结算
+message CSResponseTeaBarTableSettle
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆id 
+	optional int64 statistics_id = 3;//统计id 
+}
+
+//请求解散茶馆房间
+message CSRequestDissolveTeaBarTable
+{
+	optional int64 tid = 1;//桌子id
+	optional ENZoneType ztype = 2 [default = EN_Zone_SiChuan];
+}
+
+//回复解散茶馆房间
+message CSResponseDissolveTeaBarTable
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tid = 2;//桌子id
+}
+
+//请求录入茶馆创建房间信息
+message CSRequestChangeTeabarCreateInfo
+{
+	optional int64 tbid = 1;//茶馆id 
+	optional string teabar_create_info = 2;
+	optional int32 game_type = 3;// 游戏号 
+}
+
+//回复录入茶馆创建房间信息
+message CSResponseChangeTeabarCreateInfo
+{
+	optional ENMessageError result = 1;//结果
+	optional int64 tbid = 2;//茶馆id
+	optional string teabar_create_info = 3;
+	optional int32 game_type = 4;// 游戏号 
+}
+
+//茶馆end
+
+//漂相关协议
+//广播玩家开始漂
+message CSNotifyStartPiao
+{
+	optional bool can_pass = 1;	// 漂点过
+	optional int32 min_score = 2;	// 最小漂分
+}
+
+//玩家请求漂与不漂
+message CSRequestSelectPiao
+{
+ 	optional bool is_piao = 1;//选择是否漂
+  	optional int32 piao_score = 2; // 漂分 1-5
+}
+// 回复玩家漂
+message CSResponseSelectPiao
+{
+  	optional ENMessageError result = 1;
+  	optional bool is_piao = 2;//选择是否漂
+  	optional int32 seat_index =3;
+}
+//广播玩家漂
+message CSNotifySelectPiao
+{
+  	optional int32 seat_index = 1;//座位索引
+  	optional bool is_piao = 2;//选择是否漂
+  	optional int32 piao_score = 3; // 漂分 1-5
+}
+
+//广播有话说
+message CSNotifyTalkCard
+{
+	optional int32 seat_index = 1;//座位索引
+	repeated int32 talk_cards = 2;//有话说的所有牌
+};
+
+// 请求回放码
+message CSRequestReplayCode
+{
+	optional int64 recordid = 1;
+	optional int32 round = 2;
+	optional int32 stamp = 3;
+	optional ENTableType game_type = 4 [default = EN_Table_LZMJ];
+}
+message CSResponseReplayCode
+{
+	optional ENMessageError result = 1;
+	optional int64 replay_code = 2;	// 回放码
+}
+
+// 请求回放码数据
+message CSRequestReplayCodeData
+{
+	optional int64 replay_code = 1;	// 回放码
+}
+message CSResponseReplayCodeData
+{
+	optional ENMessageError result = 1;
+	optional PBLZMJTableFlowRecordItem record = 2;
+	optional PBDSSTableFlowRecordItem dss_record = 4;
+	optional PBSDRTableFlowRecordItem sdr_record = 5;
+	optional int32 round = 3;
+}
+
+// 请求扣牌
+message CSRequestKouPai
+{
+}
+message CSResponseKouPai
+{
+	optional ENMessageError result = 1;
+}
+
+// 通知吃包子
+message CSNotifyChibaozi
+{
+	optional int32 index = 1;
+}
+
+message CSNotifyLeftCardNum
+{
+	optional int32 seat_id = 1;
+	optional int32 card_num = 2;
+}
+
+message CSNotifyHuCards
+{
+	repeated int32 can_dian_pao_cards = 1;
+	repeated int32 can_zi_mo_cards = 2;
+	optional bool is_diao_jiang = 3 [default = false];
+}
+
+message CSNotifyMingPai
+{
+	optional int32 seat_index = 1;
+	repeated int32 card = 2;
+}
+
+// ====================================================== 上大人 ====================================================================
+message CSRequestSdrCreateTable
+{
+	optional int32 ttype = 1;	// ENTableType
+	optional PBSDRTableConfig conf = 2;
+	optional int32 ztype = 3;	// ENZoneType
+	optional bool freegame = 4 [default = false]; //
+	optional bool is_create_for_new = 5;
+}
+message CSResponseSdrCreateTable
+{
+	optional ENMessageError result = 1; // 结果
+	optional int32 tid = 2; //桌子ID
+	optional int32 ttype = 3;	// ENTableType
+	//optional ENZoneType ztype = 4 [default = 10];
+	optional int32 ret_tid = 5;	// 在某些进入房间失败的时候，返回正确的房间号
+	optional PBSDRTableConfig conf = 6;
+}
+
+message CSRequestSdrEnterTable
+{
+	optional int32 tid 						= 1;
+	optional int32 connect_id 				= 2;	// 客户端忽略
+	optional int32 ztype 					= 3 [default = 10];
+	optional int32 game_svid 				= 4;
+	optional ENPlayerPositionType postype 	= 5;
+	optional int32 skipmatch_game_svid 		= 6;	//闯关svidid
+	optional int32 pos_type 				= 7;	//pos类型
+	optional int32 coin_match_level 		= 8;	//金币场匹配的等级
+	optional int32 coinmatch_game_svid		= 9;	//金币场svid
+}
+message CSResponseSdrEnterTable
+{
+	optional int32 result = 1; // ENMessageError 结果	
+	optional CSNotifyTableInfo table_info = 2;
+	optional int32 gamesvrd_id = 3;
+	optional ENTableType ttype = 4;
+	optional int32 pos_type = 6;	// ENPlayerPositionType
+	optional int32 ret_tid = 7;	// 在某些进入房间失败的时候，返回正确的房间号
+}
+
+message CSRequestSDRDoAction
+{
+	optional int32 seat_index = 1;
+	optional int32 act_type = 2;
+	optional int32 dest_card = 3;
+	repeated int32 cards = 4;
+	optional int32 token = 5;
+	optional int32 choice_token = 6;
+	optional int32 piao_score = 7; 
+	// 客户端 透传数据
+	optional ENPokerType cardtype = 11; // 牌型
+	optional int32 real = 12;	// 牌型起点
+	optional int32 num = 13;	// 牌型长度
+	optional bool is_jian_card = 14; 		// 是否是捡的牌
+	optional int32 jiao_score = 15; // 叫分
+}
+message CSResponseSDRDoAction
+{
+	optional ENMessageError result = 1;
+	optional PBSDRAction action = 2;
+}
+
+message CSRequestSetNextRoundHandCards
+{
+	//seat上牌设置为空时，为整个牌堆的配置
+	//牌堆为空时，只设置seat上的牌
+	//2种牌可以同时设置
+	//i_table_dealer_index-1时，不设置庄家
+	
+	repeated int32 i_hand_cards_for_seat_0		= 1;
+	repeated int32 i_hand_cards_for_seat_1		= 2;
+	repeated int32 i_hand_cards_for_seat_2		= 3;
+	repeated int32 i_hand_cards_for_seat_3		= 4;
+	
+	repeated int32 i_cards_pile_cards			  = 5;  //剩余牌堆上的牌
+	optional int32 i_table_dealer_index			  = 6[default = -1];	//庄家
+	optional int32 i_joker_card 				  = 7;	//赖子牌
+	optional int32 i_jiang_card 				  = 8;	//将牌
+}
+
+message CSResponseSetNextRoundHandCards
+{
+	optional int32 i_ret = 1;	//结果
+}
+
+message CSRequestSetNextCard
+{
+	repeated int32 i_next_card = 1;	//下一张牌堆的牌
+}
+
+message CSResponseSetNextCard
+{
+	optional int32 i_ret = 1;	//结果
+}
+
+//通知双牛
+message CSNotifyNiu
+{
+	optional int32 i_seat_index = 1;
+}
+
+//发胡牌信息
+message CSNotifyHuInfo
+{
+	optional int32 seat_index = 1;
+	repeated PBSDRCheckHuInfo check_hu_info = 2;
+}
+
+//闯关匹配
+message CSRequestSkipMatchGame
+{
+	optional int32 				ttype	= 1;	//游戏类型
+	optional PBSDRTableConfig 	conf 	= 2;	//房间配置
+	optional int32 				level = 3;		//创关的等级 1~7
+	optional bool 				use_diamond = 4;	//是否使用砖石
+	optional bool 				give_up_level = 5;	//是否放弃等级匹配，即失败后不用砖石
+	optional int32 				use_diamond_val	= 6;	//使用砖石的值
+	optional int32 				connect_id = 7;
+}
+
+//闯关回复匹配结果
+message CSResponseSkipMatchGame
+{
+	optional int32 result	= 1;	//结果
+	optional int64 tid 		= 2;	//房间号
+	optional int32 skipmatch_game_svid = 3;	//闯关的svid
+	optional int32 pos_type	= 4;	//位置信息
+	optional int32 level_after_skip	= 5;	//匹配后的等级
+}
+
+//金币场匹配
+message CSRequestCoinMatchGame
+{
+	optional int32 			ttype			= 1;	//游戏类型
+	optional int32 			seat_num 		= 2;	//人数
+	optional int32 			level 			= 3;	//梯度
+	optional int32			is_quick_start 	= 4;	//是否快速开始游戏，系统自动选择梯度
+	optional int32 			connect_id 		= 5;
+	optional int32 			exclude_tid		= 6;	//排除的房间号
+}
+
+//金币场结果
+message CSResponseCoinMatchGame
+{
+	optional int32 result					= 1;	//结果
+	optional int64 tid 						= 2;	//房间号
+	optional int32 coin_game_svid			= 3;	//金币场的svid
+	optional int32 pos_type					= 4;	//位置信息
+}
+
+//通知砖石改变
+message CSNotifyDiamondChange
+{
+	optional int64 cur_diamond = 1;
+}
+
+//通知奖金改变
+message CSNotifyBonusChange
+{
+	optional float cur_bonus = 1;
+}
+
+//通知闯关后的结果
+message CSNotifySkipMatchResult
+{
+	optional PBUserGameData user_game_data = 1;
+	
+	//optional int64 uid = 1;						//用户的id
+	//optional int64 skip_match_session_id = 2;	//本次对局的session-id
+	//optional int32 skipmatch_level_change_val = 3;			//等级改变后的值
+	//optional int32 skipmatch_state = 4;			//等级状态改变后的值
+	//optional int64 bonus_change_val = 5;		//奖金改变
+	//optional int32 connect_id 		= 6;	
+	//optional int32 skipmatch_need_share_num = 7;
+	//optional int32 skipmatch_need_diamond_num = 8;
+}
+
+//玩家放弃当前等级，在失败之后
+message CSRequestGiveUpLevel
+{
+
+}
+
+//托管
+message CSRequestTrusteeship
+{
+	optional bool is_trusteeship = 1;	//托管还是取消托管
+}
+
+message CSResponseTrusteeship
+{
+	optional int32 result = 1;	//结果
+	optional bool is_trusteeship = 2;
+}
+
+message CSNotifyTrusteeship
+{
+	optional int32 seat_index = 1;
+	optional bool is_trusteeship = 2;
+}
+
+//申请用户某些活动游戏数据
+message CSRequestUserActivityGameInfo
+{
+	optional int64 uid = 1;
+	optional int32 activity_type = 2;	//哪种游戏活动
+	optional int32 game_type = 3;	//哪个游戏的数据
+}
+
+message CSResponseUserActivityGameInfo
+{
+	optional int32 result = 1;
+	optional PBUserGameData user_game_data = 2;
+	optional int32 activity_type = 3;	//哪种游戏活动
+	optional int32 game_type = 4;	//哪个游戏的数据
+}
+
+message CSNotifyShareSuccess
+{
+	optional int32 result = 1;
+	optional PBUserGameData user_game_data_after_edit = 2;	//改变之后的的用户值
+}
+
+message CSRequestGiveUpSkipMatchLevel
+{
+	optional int32 game_type = 1;
+}
+
+message CSResponseGiveUpSkipMatchLevel
+{
+	optional int32 result = 1;	//结果
+	optional PBUserGameData user_game_data = 2;	//放弃后的游戏结果
+}
+
+message CSNotifyMatchResult
+{
+	repeated PBSeatMatchResult 	seat_result		= 1;	//玩家结果信息
+}
+
+message PBSeatMatchResult
+{
+	optional int32 uid 					= 1;	//玩家uid
+	optional PBSDRSeatWinInfo win_info 	= 2;	//玩家win_info
+	optional int32 coins_change_value	= 3;	//玩家金币的修改数
+	optional int32 coins_after_update	= 4;	//玩家更新后的金币数
+	optional int32 pre_level			= 5;	//上一句的金币场的等级
+	optional int32 coins_state			= 6;	//当前金币状态
+}
+
+//通知金币改变
+message CSNotifyCoinsChange
+{
+	optional int64 cur_coins = 1;
+}

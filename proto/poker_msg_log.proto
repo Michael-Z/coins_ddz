@@ -1,0 +1,218 @@
+message LogChipJournal
+{
+	optional int64 uid			= 1;
+	optional int64 act_num		= 2;
+	optional int64 total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int32 acc_type		= 6;
+	optional int32 channel		= 7;
+	optional int64 small_blind  	= 8;
+	optional int32 table_type  	= 9;
+	optional int32 sub_type		= 10;
+	optional int32 draw_rate 	= 11; 
+}
+
+message LogOnline
+{
+	optional int32 svr_id	= 1;
+	optional int32 online	= 2;
+}
+
+message LogPlay
+{
+	optional int32 play		= 1;	
+}
+
+
+message LogRegist
+{
+	optional int64	uid			= 1;
+	optional int32	time_stamp	= 2;
+	optional int32	acc_type	= 3;
+	optional string	name		= 4;
+	optional int32	channel		= 5;
+	optional string device_name = 6;
+	optional string band		= 7;
+	optional string ip			= 8;
+}
+
+message LogLogin
+{
+	optional int64	uid			= 1;
+	optional int32	time_stamp	= 2;
+	optional int32	acc_type	= 3;
+	optional int32	channel		= 4;
+	optional string device_name = 5;
+	optional string band		= 6;
+	optional string ip			= 7;
+}
+
+message LogLogout
+{
+	optional int64	uid			= 1;
+	optional int32	online_time	= 2;
+	optional int32	acc_type	= 3;
+	optional int32	channel		= 4;
+}
+
+message LogGameLog
+{
+	optional int64 table_id		= 1;
+	optional int64 game_id		= 2;
+	optional string	table_log	= 5;
+	optional int32 begin_time	= 6;
+	optional int32 end_time		= 7;
+	repeated int64	players	= 8; // 参与牌局玩家
+	optional int32 seat_num = 9;
+	optional int32 game_type = 10;
+	optional int32 table_round = 11;
+	optional bool is_free_game = 12;
+	optional bool is_finished_game = 13;	//是否是完成的游戏
+	optional int64 creator_uid = 14; // 房主ID
+	optional int64 master_uid = 15; // 茶馆主人ID
+	//闯关
+	optional int32 channel = 16;
+	repeated PBLogPlayersInfo players_info = 17;
+}
+
+message PBLogPlayersInfo
+{
+	optional int64 player_uid = 1;
+	optional int32 channel = 2;
+}
+
+message LogGameInfoLog
+{
+	optional int64 game_id		= 1;
+	optional int32 game_type	= 2;
+	optional int32 conf_round	= 3;
+	optional int32 real_round	= 4;
+	optional int32 seat_num		= 5;
+	optional int64 creator_uid = 14; // 房主ID
+	optional int64 master_uid = 15; // 茶馆主人ID
+}
+
+message LogTeaBarChipsFlow
+{
+	optional int64 tbid			= 1;
+	optional int64 act_num		= 2;
+	optional int64 total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int64 master_uid	= 6;
+}
+
+message LogAtPlay
+{
+	optional int32 paly	= 1;
+	optional int32 game_type = 2;
+	optional int32 svr_id = 3;
+}
+
+// ============= 打点数据 ===================
+message LogTableInfoLog
+{
+	optional int64 game_id			= 1;
+	optional int32 table_id			= 2;
+	optional int32 conf_round		= 3;
+	optional int32 real_round		= 4;
+	optional int32 seat_num			= 5;
+	optional int32 game_type		= 6;
+	optional string detail			= 7;
+	optional int64 creator_uid		= 8;
+	optional int64 tbid				= 9;
+	optional int64 master_uid		= 10;
+	optional int32 time_used		= 11;
+	optional int32 time_stamp		= 12;
+}
+
+message LogTablePlayerLog
+{
+	optional int64 uid				= 1;
+	optional int64 game_id			= 2;
+	optional int32 win_round		= 3;
+	optional int32 score			= 4;
+	optional int32 cost				= 5;
+	optional bool is_winner			= 6;
+	optional int32 time_stamp		= 7;
+}
+
+message LogCreateTable
+{
+	optional int64 creator_uid	= 1;
+	optional int64 master_uid	= 2;
+	optional int32 game_type = 3;
+	optional int32 table_id = 4;
+}
+//砖石流水上报
+message LogDiamondFlow
+{
+	optional int64 uid			= 1;
+	optional int64 act_num		= 2;
+	optional int64 total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int32 acc_type		= 6;
+	optional int32 channel 		= 7;
+}
+
+//奖金流水上报
+message LogBonusFlow
+{
+	optional int64 uid			= 1;
+	optional float act_num		= 2;
+	optional float total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int32 acc_type		= 6;
+	optional int32 channel 		= 7;
+}
+
+//闯关等级和状态流水的上报
+message LogSkipMatchLevelAndStateFlow
+{
+	optional int64 uid 				= 1;
+	optional int32 level_act_val 	= 2;	//等级变更值
+	optional int32 level_after_change = 3;	//等级变更后的状态值
+	optional int32 state_after_change = 4;	//状态变更后的状态值
+	optional int32 reason			= 5;
+	optional int32 time_stamp 		= 6;
+	optional int32 game_type		= 7;	//游戏类型
+	optional bool is_finished_skip	= 8;	//是否是一次成功的过关
+	optional int32 channel 			= 9;
+}
+
+//闯关闯过局数上报
+message LogSkipMatchTotalWinNum
+{
+	optional int64 uid			= 1;
+	optional int32 act_num		= 2;
+	optional int32 total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int32 channel 		= 6;
+}
+
+//闯关历史总奖金上报
+message LogTotalBonus
+{
+	optional int64 uid			= 1;
+	optional float act_num		= 2;
+	optional float total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int32 channel 		= 6;
+}
+
+//金币流水上报
+message LogCoinsFlow
+{
+	optional int64 uid			= 1;
+	optional int64 act_num		= 2;
+	optional int64 total_num	= 3;
+	optional int32 reason		= 4;
+	optional int32 time_stamp	= 5;
+	optional int32 acc_type		= 6;
+	optional int32 channel 		= 7;
+}

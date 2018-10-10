@@ -1,0 +1,1172 @@
+//
+
+enum ENMessageError{
+	EN_MESSAGE_ERROR_OK = 0;
+	EN_MESSAGE_DB_NOT_FOUND = 1;
+	EN_MESSAGE_DB_INVALID = 2;	
+	EN_MESSAGE_DB_PARSE_FAILED = 3; 
+	EN_MESSAGE_DB_CREATEUID_FAILED = 4; 
+	EN_MESSAGE_DB_SAVE_FAILED = 5;
+	EN_MESSAGE_ERROR_REQUEST_PROCESSING =  6;
+	
+	EN_MESSAGE_INVALID_ACC_TOKEN =  100;
+	EN_MESSAGE_ALREADY_CREATE_TABLE = 101;
+	EN_MESSAGE_TABLE_NOT_EXIST = 102;
+	EN_MESSAGE_NO_EMPTY_SEAT = 103;
+	EN_MESSAGE_INVALID_SEAT_INDEX = 104;
+	EN_MESSAGE_INVALID_ACTION = 105;
+	EN_MESSAGE_INVALID_TABLE_CONF = 106;
+	EN_MESSAGE_INVALID_TABLE_STATE = 107;
+	
+	EN_MESSAGE_SYSTEM_FAILED = 108;
+	EN_MESSAGE_NO_ENOUGH_CHIP = 109;
+	EN_MESSAGE_ALREADY_IN_TABLE = 110;
+	
+	EN_MESSAGE_INVALID_PROTOCOL_VERSION = 111;
+	EN_MESSAGE_INVALID_FLOW_RECORD_NOT_FOUND = 112;
+	
+	EN_MESSAGE_INVALID_EXCEED_DELEGATE_TABLE_NUM = 113;
+	EN_MESSAGE_SALER_EXPECTED = 114;
+	EN_MESSAGE_PERMISSION_DENY = 116;
+	EN_MESSAGE_IN_MAINTENANCE =117;
+	EN_MESSAGE_INVALID_REPLAY_CODE = 118;	// 回放码已失效
+	EN_MESSAGE_PLAYING_CANNOT_CHANGE_TABLE = 119;
+
+	//茶馆
+	EN_MESSAGE_NOT_SALER_CAN_NOT_CREATE_TEA_BAR = 1001;//非代理不能创建茶馆
+	EN_MESSAGE_TEA_BAR_COUNT_LIMIT = 1002;//创建茶馆已经达到上限
+	EN_MESSAGE_NOT_IN_TEA_BAR = 1003;//不在茶馆
+	EN_MESSAGE_TEA_BAR_NOT_EXIST = 1004;//茶馆不存在
+	EN_MESSAGE_TEA_BAR_CAN_NOT_APPLY = 1005;//茶馆不能再申请
+	EN_MESSAGE_TEA_BAR_IS_APPLY = 1006;//已经申请加入茶馆
+	EN_MESSAGE_IS_IN_TEA_BAR = 1007;//已经再这个茶馆了
+	EN_MESSAGE_NOT_HAS_RIGHT = 1008;//没有权限
+	EN_MESSAGE_TEA_BAR_APPLY_NOT_EXSIT = 1009;//申请不存在
+	EN_MESSAGE_TEA_BAR_USER_COUNT_LIMIT = 1010;//茶馆人数已满
+	EN_MESSAGE_OWNER_CAN_NOT_DROP_TEA_BAR = 1011;//群主不能退出茶馆
+	EN_MESSAGE_OWNER_AND_TEA_BAR_NOT_MATCH = 1012;//群主和茶馆不匹配
+	EN_MESSAGE_TEA_BAR_CAN_NOT_CREATE_WAIT_TABLE = 1013;//茶馆不能再创建空桌子了
+	EN_MESSAGE_TEA_BAR_NO_ENOUGH_CHIP = 1014;//茶馆房卡不够了
+	EN_MESSAGE_ADD_CHIPS_ZERO = 1015;//茶馆增加或者减少房卡数为0
+	EN_MESSAGE_PUT_CHIPS_TO_TEA_BAR_NO_ENOUGH = 1016;//放入房卡太多，群主身上房卡不足
+	EN_MESSAGE_GET_CHIPS_FROM_TEA_BAR_NO_ENOUGH = 1017;//提取房卡太多，茶馆房卡不足
+	EN_MESSAGE_TEA_BAR_NAME_EMPTY = 1018;//茶馆名字为空
+	EN_MESSAGE_TEA_BAR_DESC_EMPTY = 1019;//茶馆详情为空
+	EN_MESSAGE_TEA_BAR_TABLE_STAT_NOT_EXIST = 1020;//茶馆桌子统计记录不存在
+	EN_MESSAGE_TEA_BAR_TABLE_STAT_SETTLED = 1021;//茶馆桌子统计记录已经结算
+	EN_MESSAGE_TEA_BAR_TABLE_GAME_START_CANNOT_DISSOLVE = 1022;//牌局已经开始不能解散
+	EN_MESSAGE_TEA_BAR_IN_TEABAR_TABLE_IN_DROPING	= 1033;	//已经在茶馆的桌子中，不能离开该茶馆	
+	
+	//快速比赛场
+	EN_MESSAGE_OUT_OF_MATCH_TIME = 2001; //不是比赛时间
+	EN_MESSAGE_ALLOC_TABLE_FAILED = 2002;
+	EN_MESSAGE_HAS_JOIN_PRE = 2003;
+	EN_MESSAGE_IS_MATCHING = 2004;
+	
+	//闯关		
+	EN_MESSAGE_LEVEL_NOT_MATCH			= 3001;	//等级不匹配
+	EN_MESSAGE_LEVEL_STATE_NOT_MATCH 	= 3002;	//状态不匹配
+	EN_MESSAGE_NO_ENOUGH_DIAMOND		= 3003;	//砖石不够
+	EN_MESSAGE_INVALID_STATE 			= 3004;	//状态不匹配
+	EN_MESSAGE_INVALID_ACTIVE_GAME_INFO	= 3005;
+	//闯关中的匹配
+	EN_MESSAGE_HAS_NOT_ENOUGU_COIN			= 3010;	//携带金币太小
+	EN_MESSAGE_HAS_TOO_MATCH_COIN		= 3011;	//携带金币太多
+	EN_MESSAGE_INVALID_LEVEL			= 3012;	//等级配置未找到
+}
+
+enum ENPlayerPositionType{
+	EN_Position_Hall	= 0;
+	EN_Position_Table	= 1;
+	EN_Position_Fpf		= 2;
+	EN_Position_Daer	= 3;
+	EN_Position_Gl_Daer	= 4;
+	EN_Position_Xy_Daer	= 5;
+	EN_Position_DSS_Cd	= 6;
+	EN_Position_DSS_Jj	= 7;
+	EN_Position_DSS_Zj	= 8;
+	EN_Position_DSS_ZY	= 9;
+	EN_Position_DSS_Dy	= 10;
+	EN_Position_DSS_Wj	= 11;
+	EN_Position_DSS_Nc	= 12;
+	EN_Position_DSS_Jy  = 13;
+	EN_Position_DSS_Gh	= 14;
+	EN_Position_DSS_Gy	= 15;
+	EN_Position_DSS_Xc	= 16;
+	EN_Position_DSS_Mx	= 17;
+	EN_Position_DSS_Bz	= 18;
+	EN_Position_DSS_Px	= 19;
+	EN_Position_DSS_Cx	= 20;
+	EN_Position_DSS_Lz	= 21;
+	EN_Position_DSS_Nb	= 22;
+	EN_Position_DSS_Yl	= 23;
+	EN_Position_DSS_Ay	= 24;
+	EN_Position_DSS_Xj	= 25;
+	EN_Position_DSS_Lq	= 26;
+	EN_Position_DSS_Zg	= 27;
+	EN_Position_DSS_Ay_D = 28;
+	EN_Position_DSS_Gy_R = 29;
+	EN_Position_DSS_Sf  = 30;
+	EN_Position_DSS_Ps_D = 31;
+	EN_Position_DSS_Ql_D = 32;
+	EN_Position_DSS_AB_D = 33;
+	EN_Position_SDR_Es	= 60;
+	EN_Position_SDR_Lc	= 61; //利川
+	EN_Position_SDR_Ch	= 62; 
+	EN_Position_SDR_BD	= 63;
+	EN_Position_SDR_Bh	= 64;
+	EN_Position_SDR_LF	= 65;
+	EN_Position_SDR_Js	= 66;	
+	EN_Position_SDR_Ysg	= 67; //巴东野三关
+	EN_Position_SDR_Xx96 = 68;//湘西96	
+	EN_Position_SDR_Tj = 69; // 野三关踢脚
+	EN_Position_DDZ_MC = 70; // 麻城斗地主
+	EN_Position_DDZ_Es = 71; // 恩施斗地主
+	EN_Position_SSP_LY = 72; // 罗源四色牌
+	EN_Position_MJ_BD = 73; // 巴东麻将
+	EN_Position_SDR_XE = 74; // 宣恩上大人
+	EN_Position_SDR_XE96 = 75; // 宣恩96
+    EN_Position_SDR_XCCH = 76;//孝昌扯胡
+	EN_Position_SDR_XF = 77;// 咸丰绍胡
+	EN_Position_PDK_XF = 78;// 咸丰跑得快
+	EN_Position_PDK_CLASSIC 	= 79;//经典
+	EN_Position_DDZ_JD = 81;// 经典斗地主
+	EN_Position_SSP_LJ = 83; // 连江四色牌
+	EN_Position_SDR_YC = 82;// 宜城上大人
+	EN_Position_DDZ_YC = 84;	//应城斗地主
+	EN_Position_SDR_YC_2 = 85;// 应城上大人
+	EN_Position_MJ_ES = 86;// 恩施麻将
+	EN_Position_PK_HCNG	= 87;	//河池牛鬼
+	EN_Position_GZP_TC = 88;// 通城个子牌
+	EN_Position_MJ_LX = 89;// 陇西麻将
+	EN_Position_SDR_YCLJ = 91; //宜昌老精
+	EN_Position_MJ_BD_XL = 92; //巴东血流
+	EN_Position_MJ_MINXIAN = 93; //岷县麻将
+
+	EN_Position_SDR_3_JING = 101;//宜昌3精
+	EN_Position_SDR_5_JING = 102;//宜昌5精
+	EN_Position_SDR_DYFJ = 103;// 当阳翻金
+	EN_Position_LX_WK = 104;// 陇西挖坑
+	
+	//比赛场一定是 199 - 300 其他游戏不要占用
+	EN_Position_QUICK_MATCH = 199; //快速比赛场
+	EN_Position_SDR_ES_MATCH	= 200;//恩施快速比赛
+	
+	
+	//闯关
+	EN_Position_CG_DDZ	= 301;			//斗地主闯关
+	EN_Position_4Ren_DDZ = 302;			// 4人斗地主
+	EN_Position_4Ren_DDZ_COIN = 303;	// 4人斗地主 金币场
+	EN_Position_3Ren_DDZ = 304;			// 3人斗地主
+	EN_Position_3Ren_DDZ_COIN = 305;	// 3人斗地主 金币场
+}
+
+enum ENNodeType{
+	EN_Node_Client = 0;
+	EN_Node_Connect = 1;
+	EN_Node_Hall = 2;
+	EN_Node_Route = 3;
+	EN_Node_Game = 4;
+	EN_Node_User = 6;
+	EN_Node_Room = 7;
+	EN_Node_DBProxy = 8;
+	EN_Node_GM = 9;
+	EN_Node_Log = 10;
+	EN_Node_FPF = 11;		// 跑胡子 娄底放炮罚
+	EN_Node_DAER = 12;		// 跑胡子 泸州大贰	泸县大贰
+	EN_Node_GL_DAER = 13;	// 跑胡子 古蔺大贰
+	EN_Node_XY_DAER = 14;	// 跑胡子 叙永大贰
+	EN_Node_DSS_CD = 15;	// 斗十四（金堂）
+	EN_Node_DSS_JJ = 16;	// 斗十四（江津）
+	EN_Node_DSS_ZJ = 17;	// 斗十四（中江）
+	EN_Node_DSS_ZY	=18;	// 斗十四（资阳）
+	EN_Node_DSS_Dy = 19;	// 斗十四（大邑）
+	EN_Node_DSS_WJ = 20;	// 成都斗十四（温江）
+	EN_Node_DSS_NC = 21;	// 南充斗十四
+	EN_Node_DSS_JY = 22;    // 斗十四（简阳））
+	EN_Node_DSS_GH = 23;	// 斗十四（广汉）
+	EN_Node_DSS_GY = 24;	// 斗十四（广元）
+	EN_Node_DSS_XC = 25;	//  斗十四（西充）
+	EN_Node_DSS_MX = 26;	//  斗十四（茂县）
+	EN_Node_DSS_BZ = 27;	//  斗十四（巴中）
+	EN_Node_DSS_PX = 28;	//  斗十四（郫县）
+	EN_Node_DSS_CX = 29;	//  斗十四（苍溪）
+	EN_Node_DSS_LZ = 30;	//  斗十四（阆中）
+	EN_Node_DSS_NB = 31;	//  斗十四（南部）
+	EN_Node_DSS_YL = 32;	//  斗十四（仪陇）
+	EN_Node_DSS_AY = 33;	//  斗十四（安岳）
+	EN_Node_DSS_XJ = 34;	//  斗十四（新津）
+	EN_Node_DSS_LQ = 35;	//  斗十四（龙泉）
+	EN_Node_DSS_ZG = 36;	//  斗十四（自贡）
+
+	EN_Node_DSS_AY_D = 37;
+	EN_Node_DSS_GY_R = 38;
+	EN_Node_DSS_SF = 39;	//  斗十四（什邡）
+	EN_Node_DSS_PS_D = 40;   // 斗十四（彭山）
+	EN_Node_DSS_QL_D = 41;   // 斗十四（邛崃）
+	EN_Node_DSS_AB_D = 42;   // 斗十四（阿坝）
+	EN_Node_SDR_ES = 60;   // 恩施绍胡
+	EN_Node_SDR_LC = 61;   // 利川上大人
+	EN_Node_SDR_CH = 62;   // 楚胡
+	EN_Node_SDR_BD = 63;   // 巴东上大人
+	EN_Node_SDR_BH = 64;   // 百胡
+	EN_Node_SDR_LF = 65;   // 来凤
+	EN_Node_SDR_JS = 66;   // 建始楚胡
+	EN_Node_SDR_YSG = 67;  // 巴东野三关
+	EN_Node_SDR_Xx96 = 68;  // 湘西96
+	EN_Node_SDR_TJ = 69;  // 野三关踢脚
+	EN_Node_DDZ_MC = 70;  // 麻城斗地主
+	EN_Node_DDZ_ES = 71;  // 恩施斗地主
+	EN_Node_SSP_LY = 72;  // 罗源四色牌
+	EN_Node_MJ_BD = 73;  // 巴东麻将
+	EN_Node_SDR_XE = 74;  // 宣恩上大人
+	EN_Node_SDR_XE96 = 75;  // 宣恩96
+	EN_Node_SDR_XCCH = 76;	//孝昌扯胡
+	EN_Node_SDR_XF = 77;	// 咸丰绍胡
+	EN_Node_PDK_XF = 78;	// 咸丰跑得快
+	EN_Node_PDK_CLASSIC	= 79;	//经典跑得快
+	EN_Node_DDZ_JD = 81;	// 经典斗地主
+	EN_Node_SDR_YC = 82;	// 宜城上大人
+	EN_Node_SSP_LJ = 83;  // 连江四色牌
+	EN_NODE_DDZ_YC = 84;	//应城斗地主
+	EN_Node_SDR_YC_2 = 85;	// 应城上大人
+	EN_Node_MJ_ES = 86;// 恩施麻将
+	EN_Node_PK_HCNG	= 87;	//河池牛鬼
+	EN_Node_GZP_TC = 88;	// 通城个子牌
+	EN_Node_TeaBar = 80;	// 茶馆
+
+	EN_Node_MJ_LX = 89;// 陇西麻将
+	EN_Node_List_Dispather = 90;
+	EN_Node_SDR_YCLJ = 91;	//宜昌老精
+	EN_Node_MJ_BD_XL = 92; //巴东血流
+	EN_Node_MJ_MINXIAN = 93; //岷县麻将
+	EN_Node_PHP = 99;
+	EN_Node_Unknown = 100;
+	EN_Node_SDR_3_JING = 101;//宜昌3精
+	EN_Node_SDR_5_JING = 102;//宜昌3精
+	EN_Node_SDR_DYFJ = 103;	//当阳翻金
+	EN_Node_LX_WK = 104;// 陇西挖坑
+	
+	//快速比赛场一定是 199 - 300 其他游戏不要占用
+	EN_Node_SDR_ES_MATCH = 200;	// 恩施
+	//闯关301~400
+	EN_Node_CG_DDZ = 301;				//斗地主闯关
+	EN_Node_4Ren_DDZ = 302;				// 4人斗地主
+	EN_Node_4Ren_DDZ_COIN = 303;		// 4人斗地主 金币场
+	EN_Node_3Ren_DDZ = 304;				// 3人斗地主
+	EN_Node_3Ren_DDZ_COIN = 305;		// 3人斗地主 金币场
+	
+	EN_Node_Robot = 401;//机器人服务器节点
+}
+
+enum ENRouteType
+{
+	EN_Route_p2p		= 0;
+	EN_Route_hash		= 1;
+	EN_Route_broadcast	= 2;
+}
+
+enum ENDataType{
+	EN_Data_Int = 0;
+	EN_Data_Str = 1;
+}
+
+enum ENZoneType
+{
+	EN_Zone_LouDi = 0;		// 娄底
+	EN_Zone_LuZhou = 1;		// 泸州
+	EN_Zone_YiBin = 2;		// 宜宾
+	EN_Zone_LeShan = 3;		// 乐山
+
+	EN_Zone_ChengDu = 4;	// 成都
+	EN_Zone_SiChuan = 5;	// 四川，斗十四都用这个，把这个当默认的
+
+	EN_Zone_Common = 10;		//通用
+}
+
+enum ENTableType {
+	EN_Table_LZMJ = 0;	//泸州麻将
+	EN_Table_FPF = 1;		// 娄底放炮罚
+	EN_Table_LZMJ_MATCH = 2;
+	EN_Table_DAER = 3;		// 泸州大贰
+	EN_Table_LXDAER = 4;	// 泸县大贰
+	EN_Table_GLDAER = 5;	// 古蔺大贰
+	EN_Table_XYDAER = 6;	// 叙永大贰
+	EN_Table_DSS_Cd = 7;	// 成都斗十四（金堂）
+	EN_Table_DSS_Jj = 8;	// 江津斗百点
+	EN_Table_DSS_Zj = 9;	// 中江乱软硬十八
+	EN_Table_DSS_Wj = 10;	// 成都斗十四（温江）
+	EN_Table_DSS_Dy = 11;	// 大邑
+	EN_Table_DSS_ZY = 12;	// 资阳
+	EN_Table_DSS_Jy =13;    //简阳
+	EN_Table_DSS_Gh = 14;	// 广汉考考
+	EN_Table_DSS_NC = 15;	// 南充
+	EN_Table_DSS_Gy = 16;   //广元（剑阁）
+	EN_Table_DSS_XC = 17;   //西充
+	EN_Table_DSS_Px = 18;   //郫县
+	EN_Table_DSS_Bz = 19;	//巴中
+	EN_Table_DSS_Mx = 20;   //茂县
+	EN_Table_DSS_Gy_R = 21;  //广元（真）
+	EN_Table_DSS_Cx = 22;   //苍溪
+	EN_Table_DSS_Lz = 23;   //阆中
+	EN_Table_DSS_Ay = 24;   //安岳
+    EN_Table_DSS_Xj = 25;	//新津
+	EN_Table_DSS_Nb = 26;   //南部
+	EN_Table_DSS_Yl = 27;   // 仪陇
+	EN_Table_DSS_Zg = 28;   // 自贡
+	EN_Table_DSS_Sf = 29;	// 什邡
+	EN_Table_DSS_Lq = 30;   // 龙泉、双流
+	EN_Table_DSS_Ay_D = 32;   //安岳短牌
+	EN_Table_DSS_Ps_D = 34;    //彭山
+	EN_Table_DSS_Ql_D = 35;    //邛崃
+	EN_Table_DSS_Ab_D = 36;    //阿坝
+	EN_Table_SDR_Es = 60;    // 恩施
+	EN_Table_SDR_Lc = 61;    // 利川
+	EN_Table_SDR_Ch = 62;    // 楚胡
+	EN_Table_SDR_BD = 63;    // 巴东
+	EN_Table_SDR_Bh = 64;    // 百胡
+	EN_Table_SDR_LF = 65;    // 来凤
+	EN_Table_SDR_Js = 66;   	// 建始
+	EN_Table_SDR_Ysg = 67;  // 巴东野三关
+	EN_Table_SDR_Xx96 = 68;  // 湘西96
+	EN_Table_SDR_Tj = 69;  // 野三关踢脚
+	EN_Table_DDZ_MC = 70;  // 麻城斗地主
+	EN_Table_DDZ_Es = 71;  // 恩施斗地主
+	EN_Table_SSP_LY = 72;  // 罗源四色牌
+	EN_Table_MJ_BD = 73;  // 巴东麻将 
+	EN_Table_SDR_XE = 74;  // 宣恩上大人
+	EN_Table_SDR_XE96 = 75;  // 宣恩96
+	EN_Table_SDR_XCCH = 76;		//孝昌扯胡
+	EN_Table_SDR_XF = 77;		// 咸丰绍胡
+	EN_Table_PDK_XF = 78; // 咸丰跑得快
+	EN_Table_PDK_CLASSIC	= 79;	//经典跑得快
+	EN_Table_DDZ_JD = 81;		// 经典斗地主
+	EN_Table_SSP_LJ = 83;  // 连江四色牌
+	EN_Table_SDR_YC = 82;  // 宜城上大人
+	EN_Table_DDZ_YC = 84;	// 应城斗地主
+	EN_Table_SDR_YC_2 = 85;  // 应城上大人
+	EN_Table_MJ_ES = 86;// 恩施麻将
+	EN_Table_PK_HCNG	= 87;	//河池牛鬼
+	EN_Table_GZP_TC = 88;		// 通城个子牌
+	EN_Table_MJ_LX = 89;// 陇西麻将
+	EN_Table_SDR_YCLJ = 91; //宜昌老精
+	EN_Table_MJ_BD_XL = 92; //巴东血流
+	EN_Table_MJ_MINXIAN = 93; // 岷县麻将
+	
+
+	EN_Table_SDR_3_JING = 101;//宜昌3精
+	EN_Table_SDR_5_JING = 102;//宜昌5精
+	EN_Table_SDR_DYFJ = 103; //当阳翻金
+	EN_Table_LX_WK = 104; //陇西挖坑
+	
+	//快速比赛场 比赛场一定是199-300 其他游戏不要占用
+	EN_Table_SDR_ES_MATCH = 200;	// 恩施快速比赛
+	//闯关
+	EN_Table_CG_DDZ = 301;				// 斗地主闯关
+	EN_Table_4Ren_DDZ = 302;			// 4人斗地主
+	EN_Table_4Ren_DDZ_COIN = 303;		// 4人斗地主 金币场
+	EN_Table_3Ren_DDZ = 304;			// 3人斗地主
+	EN_Table_3Ren_DDZ_COIN = 305;		// 3人斗地主 金币场
+}
+
+enum ENTableSubType {
+	EN_Table_Common		= 0; // 普通
+	EN_Table_Quick		= 1; // 快速场
+}
+
+enum ENSitError {
+	EN_Sit_Succ = 0;
+	EN_Sit_No_Empty_Seat = 1;
+	EN_Sit_No_Enough_Money = 2;
+	EN_Sit_Room_Limit = 3; //房间限制
+	EN_Sit_Reconnect = 4;
+	EN_Sit_Bankrupt = 5;
+}
+
+enum ENGender {
+	EN_Gender_Male = 0;
+	EN_Gender_Female = 1;
+	EN_Gender_Unknown = 2;
+}
+
+enum ENSeatState {
+	EN_SEAT_STATE_NO_PLAYER				   	= 0; // 没有玩家
+	EN_SEAT_STATE_WAIT_FOR_NEXT_ONE_GAME   	= 1; // 等待下一单局游戏
+	EN_SEAT_STATE_READY_FOR_NEXT_ONE_GAME  	= 2; //
+	EN_SEAT_STATE_PLAYING				   	= 3; // 正在游戏中
+	EN_SEAT_STATE_WIN						= 4; // 胡牌
+	EN_SEAT_STATE_WAIT_HUAN_PAI				= 5;
+	EN_SEAT_STATE_WAIT_TO_LEAVE				= 6; //比赛场 点击离开之前 等待离开
+}
+
+// 桌子状态
+enum ENTableState
+{
+	EN_TABLE_STATE_WAIT		= 0;  // 等待最小玩家人数
+	EN_TABLE_STATE_READY_TO_START  = 1;
+	EN_TABLE_STATE_PLAYING = 2;
+	EN_TABLE_STATE_WAIT_DISSOLVE = 3; //
+	EN_TABLE_STATE_SINGLE_OVER = 6; // 单局游戏结束
+	EN_TABLE_STATE_FINISH = 5; // 游戏结束
+	EN_TABLE_STATE_AUTO_DISSOLVING = 4; //
+	EN_TABLE_STATE_WAIT_DEALER_TIANHU = 7;	//等待庄家选择是否胡天胡
+	EN_TABLE_STATE_WAIT_PLAYER_BAOPAI = 8;	//等待闲家选择是否报牌
+	EN_TABLE_STATE_WAIT_DEALER_BAOPAI = 9;	//等待庄家选择是否报牌
+
+	EN_TABLE_STATE_WAIT_BAI_HU = 10;	//等待玩家操作摆胡
+	EN_TABLE_STATE_WAIT_BAO_PAI = 11;	//等待玩家操作报牌
+	EN_TABLE_STATE_WAIT_BAI_HU_2 = 12;	//等待庄家操作摆胡
+	
+	EN_TABLE_STATE_WAIT_AN_PAI = 13;	//等待玩家操作暗牌
+	EN_TABLE_STATE_WAIT_QIANG_ZHUANG = 14;	//等待玩家操作抢庄
+	EN_TABLE_STATE_WAIT_TUO_PAI = 15;	//等待玩家操作妥牌
+	EN_TABLE_STATE_WAIT_PIAO =16;		//等待玩家选飘
+	EN_TABLE_STATE_WAIT_HUA_ZHUANG = 17 ; //等待玩家
+	EN_TABLE_STATE_WAIT_TOU_PAI =18; //等待玩家选偷
+
+	EN_TABLE_STATE_WAIT_QIANG_DI_ZHU = 19;	//等待玩家操作抢地主
+	EN_TABLE_STATE_WAIT_DOUBLE = 20;	//等待玩家操作加倍
+	EN_TABLE_STATE_WAIT_MAI_PAI = 21; //等待玩家卖牌
+	EN_TABLE_STATE_WAIT_MING_PAI = 22; //等待玩家明牌
+	EN_TABLE_STATE_WAIT_MING_PAI_2 = 23; //等待玩家明牌2
+	EN_TABLE_STATE_HUAN_PAI = 24; // 等待换牌
+
+	EN_TABLE_STATE_WAIT_GANG_PAI = 25; //等待玩家扎泛
+	EN_TABLE_STATE_WAIT_ROBOT	 = 26;	//等待机器人的状态
+}
+
+enum ENMessageType
+{
+	EN_Message_Unknown = 0;
+	EN_Message_Request = 1;
+	EN_Message_Response = 2;
+	EN_Message_Push = 3;
+}
+
+enum ENProcessResult
+{
+	EN_Process_Result_Failed = 0;
+	EN_Process_Result_Succ = 1;
+	EN_Process_Result_Completed = 2;
+}
+
+enum ENKVDataResponseResult {
+	EN_KV_Data_Response_Result_OK = 0;
+	EN_KV_Data_Response_Result_Failed = 1;
+}
+
+enum ENRouteStrategy
+{
+	EN_Route_Strategy_Node_To_Node = 0;
+	EN_Route_Strategy_Random = 1;
+	EN_Route_Strategy_HashByUid = 2;
+	EN_Route_Strategy_BroadCast = 3;
+}
+
+enum ENAccountType
+{
+	EN_Accout_Guest		= 0;
+	EN_Accout_Weixin	= 1;
+	EN_Account_FB		= 2;
+	EN_Account_Robot 	= 3;//机器人
+}
+
+enum ENMJActionType
+{
+	EN_MJ_ACTION_UNKNOWN	= 0;
+	EN_MJ_ACTION_CHUPAI	= 1;
+	EN_MJ_ACTION_NAPAI 	= 2;
+	EN_MJ_ACTION_CHI 	= 3;
+	EN_MJ_ACTION_PENG 	= 4;
+	EN_MJ_ACTION_GANG	= 5;
+	EN_MJ_ACTION_ANGANG	= 6;
+	EN_MJ_ACTION_HUPAI	= 7;
+	EN_MJ_ACTION_TING	= 8;
+	EN_MJ_ACTION_BUHUA	= 9;
+	EN_MJ_ACTION_PENGGANG	= 10;
+	EN_MJ_ACTION_PASS	= 11;
+	EN_MJ_ACTION_BAOPAI	= 12;
+}
+
+//聊天类型
+enum ENChatType
+{
+	EN_CHAT_TYPE_CHARACTER = 0;
+	EN_CHAT_TYPE_BIGFACE = 1;
+	EN_CHAT_TYPE_VOICE = 2;
+}
+
+enum ENConnectionState
+{
+	EN_Connection_State_Online = 0;
+	EN_Connection_State_Offline = 1;
+}
+
+
+// =============================== 放炮罚 ================================
+enum ENFPFActionType
+{
+	EN_FPF_ACTION_UNKNOWN	= 0;
+	EN_FPF_ACTION_CHUPAI	= 1;	// 出牌
+	EN_FPF_ACTION_NAPAI 	= 2;	// 拿牌
+	EN_FPF_ACTION_WEI 		= 3;	// 偎牌		拿牌之后
+	EN_FPF_ACTION_CHOUWEI 	= 4;	// 臭偎		拿牌之后
+	EN_FPF_ACTION_TI 		= 5;	// 提牌		拿牌之后	拢牌
+	EN_FPF_ACTION_PENG 		= 6;	// 碰牌		出牌之后	碰牌
+	EN_FPF_ACTION_PAO		= 7;	// 跑牌		出牌之后	招牌
+	EN_FPF_ACTION_CHI		= 8;	// 吃牌		出牌之后
+	EN_FPF_ACTION_PASS		= 9;	// 过牌		出牌之后
+	EN_FPF_ACTION_BI		= 10;	// 比牌 	吃牌之后
+	EN_FPF_ACTION_HUPAI		= 11;	// 胡牌
+	// 枚举必须是连续的 否则客户端无法取到值
+	EN_FPF_ACTION_FU_ZHU_MIN	= 12;	// 回放辅助操作最小值
+	EN_FPF_ACTION_QI_HU		= 13;	// 弃胡
+	EN_FPF_ACTION_BU_PAI	= 14;	// 补牌
+	EN_FPF_ACTION_OUT_CARD	= 15;	// 放入右下角列表
+	// =====================================================================
+	EN_FPF_ACTION_BAO_PAI	= 16;	// 报牌
+}
+
+// 筹码流水
+enum ENChipJournalReason
+{
+	EN_Reason_Default			= 0; // 防止未填reason
+	EN_Reason_Create_Table		= 1; //
+	EN_Reason_Dissolve_Table	= 2;
+	EN_Reason_Regist			= 3; // 注册
+	
+	EN_Reason_Create_Fpf_Table	= 4; // 创建放炮罚的房间
+	EN_Reason_Dissolve_Fpf_Table = 5;	// 解散放炮罚房间
+
+	EN_Reason_Create_Dss_Table	= 6; // 创建斗十四的房间
+
+	EN_Reason_Create_Tea_Bar_Table = 7;//创建茶馆房间
+	EN_Reason_Dissolve_Tea_Bar_Table = 8;//解散茶馆房间
+
+	EN_Reason_Master_Put_Chips_To_Tea_Bar = 9;//群主放房卡到茶馆
+	EN_Reason_Master_Get_Chips_From_Tea_Bar = 10;//群主从茶馆取房卡
+
+	EN_Reason_Create_Sdr_Table	= 11; // 创建上大人房间
+	EN_Reason_Create_Match_Table	= 12; // 比赛场房间
+}
+
+enum ENLevelAndBonusJournalReason
+{
+	EN_Reason_LevelAndBonus_Default			= 0;
+	EN_Reason_LevelAndBonus_Game_Over_Settle 	= 1;
+	EN_Reason_LevelAndBonus_Share_Success 		= 2;	//玩家选择分享成功
+	EN_Reason_LevelAndBonus_Choice_Reset 		= 3;	//玩家选择从头再来
+	EN_Reason_LevelAndBonus_Use_Diamond			= 4;	//消耗砖石
+}
+
+enum ENCoinJournalReason
+{
+	EN_Reason_Coin_Default				= 0;
+	EN_Reason_Coin_Game_Over_Settle 	= 1;
+	EN_Reason_Coin_Game_Fee				= 2;
+}
+
+enum ENSkipMatchState
+{
+	EN_Skip_Match_State_Initial = 0;	//初始状态
+	EN_Skip_Match_State_Failed 	= 1;	//失败状态
+}
+
+enum ENFPFColType
+{
+	EN_FPF_COL_TYPE_YI_TI 		= 1;	// 一提		4张牌
+	EN_FPF_COL_TYPE_YI_PAO		= 2;	// 一跑		4张牌
+	EN_FPF_COL_TYPE_YI_WEI		= 3;	// 一偎		3张牌
+	EN_FPF_COL_TYPE_YI_PENG		= 4;	// 一碰		3张牌
+	EN_FPF_COL_TYPE_YI_CHI		= 8;	// 一吃		3张牌
+	EN_FPF_COL_TYPE_YI_KAN		= 9;	// 一坎		3张牌
+	
+	EN_FPF_COL_TYPE_YI_JU_HUA	= 5;	// 一句话 	3张牌
+	EN_FPF_COL_TYPE_YI_JIAO 	= 6;	// 一绞 	3张牌
+	EN_FPF_COL_TYPE_YI_JIANG 	= 7;	// 一将 	2张牌
+	// ======================= 大贰 ===============================
+	//EN_FPF_COL_TYPE_YI_TI 		= 1;	// 一拢		4张牌
+	//EN_FPF_COL_TYPE_YI_PAO		= 2;	// 一招		4张牌
+	//EN_FPF_COL_TYPE_YI_PENG		= 4;	// 一碰		3张牌
+	//EN_FPF_COL_TYPE_YI_CHI		= 8;	// 一吃		3张牌
+	//EN_FPF_COL_TYPE_YI_KAN		= 9;	// 一坎		3张牌
+	//
+	//EN_FPF_COL_TYPE_YI_JU_HUA	= 5;	// 一句话 	3张牌
+	//EN_FPF_COL_TYPE_YI_JIAO 	= 6;	// 一绞 	3张牌
+	//EN_FPF_COL_TYPE_YI_JIANG 	= 7;	// 一将 	2张牌
+}
+
+enum ENFPFCardType
+{
+	EN_FPF_CARD_TYPE_Lower = 0;	// 小写
+	EN_FPF_CARD_TYPE_Upper = 1;	// 大写
+}
+
+enum ENFPFStyleType
+{
+	EN_FPF_STYLE_TYPE_Yi_Dian_Hong = 1;	// 一点红
+	EN_FPF_STYLE_TYPE_Zi_Mo = 2;		// 自摸
+	EN_FPF_STYLE_TYPE_Yi_Kuan_Bian = 3;	// 一块扁
+	EN_FPF_STYLE_TYPE_Wu_Hu = 4;		// 乌胡
+	EN_FPF_STYLE_TYPE_Hai_Di_Hu = 5;	// 海底胡
+	EN_FPF_STYLE_TYPE_13_Hong = 6;		// 十三红胡
+	EN_FPF_STYLE_TYPE_10_Hong = 7;		// 十红胡
+	EN_FPF_STYLE_TYPE_30_Ka_Hu = 8;	// 30卡胡
+	EN_FPF_STYLE_TYPE_20_Ka_Hu = 9;	// 20卡胡
+	EN_FPF_STYLE_TYPE_Tian_Hu = 10;	// 天胡
+	EN_FPF_STYLE_TYPE_Di_Hu = 11;		// 地胡
+	//================== 大贰 =============================
+	//EN_FPF_STYLE_TYPE_Zi_Mo = 2;		// 自摸
+	//EN_FPF_STYLE_TYPE_Wu_Hu = 4;		// 黑胡
+	//EN_FPF_STYLE_TYPE_Hai_Di_Hu = 5;	// 海底胡
+	//EN_FPF_STYLE_TYPE_10_Hong = 7;	// 十红胡
+	//EN_FPF_STYLE_TYPE_Tian_Hu = 10;	// 天胡
+	//EN_FPF_STYLE_TYPE_Di_Hu = 11;		// 地胡
+	EN_FPF_STYLE_TYPE_Kun_Hu = 12;		// 坤胡
+	EN_FPF_STYLE_TYPE_Piao_Hu = 13;		// 飘胡
+	EN_FPF_STYLE_TYPE_Luan_Hu = 14;		// 乱胡
+	EN_FPF_STYLE_TYPE_Gui_Hu = 15;		// 1归
+	EN_FPF_STYLE_TYPE_Cha_Jiao = 16;	// 查叫
+	EN_FPF_STYLE_TYPE_Bao_Hu = 17;		// 爆胡
+	EN_FPF_STYLE_TYPE_Sha_Bao = 18;		// 杀爆
+	EN_FPF_STYLE_TYPE_Geng = 19;		// 梗
+	EN_FPF_STYLE_TYPE_Gui_Hu_2 = 20;		// 2归
+	EN_FPF_STYLE_TYPE_Gui_Hu_3 = 21;		// 3归
+	EN_FPF_STYLE_TYPE_Gui_Hu_4 = 22;		// 4归
+	EN_FPF_STYLE_TYPE_Gui_Hu_5 = 23;		// 5归
+	EN_FPF_STYLE_TYPE_Quan = 24;		// 圈
+}
+
+enum ENSeatBPState
+{
+	EN_SEAT_BP_STATE_OFF = 0; //未报牌
+	EN_SEAT_BP_STATE_ON = 1; //报牌
+	EN_SEAT_BP_STATE_KILLED = 2; //被杀报
+}
+
+enum ENRoleType
+{
+	EN_Role_Type_Player = 0;
+	EN_Role_Type_OB = 1; //比赛ob
+	EN_Role_Type_Saler = 2; //代理
+}
+
+enum ENRankType
+{
+	EN_Rank_Type_LZMJ_WEEK_ROUND = 1;
+}
+
+enum ENDelegateTableState
+{
+	EN_Delegate_Table_State_Waiting = 1;	//等待中
+	EN_Delegate_Table_State_Running = 2;	//进行中
+	EN_Delegate_Table_State_Over = 3;		//已结束
+	EN_Delegate_Table_State_TimeOut = 4;	//超时已被系统回收
+}
+
+enum ENIPGroupType
+{
+	EN_IP_Group_Type_Game = 1;
+	EN_IP_Group_Type_List = 2;
+}
+
+enum ENRankListType
+{
+	// 日排行 0x01 - 0x1F
+	EN_Rank_List_Type_Day_Round = 0x01;	// 玩牌局数
+	EN_Rank_List_Type_Day_Max = 0x1F;	// 日排行最大值
+	// 周排行 0x20 - 0x3F
+	EN_Rank_List_Type_Week_Round = 0x20;	// 玩牌局数
+	EN_Rank_List_Type_Week_Max = 0x3F;	// 周排行最大值
+	// 月排行 0x40 - 0x5F
+	EN_Rank_List_Type_Month_Max = 0x5F;	// 月排行最大值
+} 
+
+// =============================== 斗十四 ====================================
+enum ENDSSStyleType
+{
+	EN_DSS_STYPE_TYPE_Default = 1;
+	EN_DSS_STYLE_TYPE_Tian_Hu = 2;	// 天胡
+}
+
+enum ENDSSColType
+{
+	EN_DSS_COL_TYPE_YI_GANG		= 1;	// 一杠		4张牌
+	EN_DSS_COL_TYPE_YI_AN		= 2;	// 一暗		3张牌
+	EN_DSS_COL_TYPE_YI_PENG		= 3;	// 一碰		3张牌
+	EN_DSS_COL_TYPE_YI_CHI		= 4;	// 一吃		2张牌
+	EN_DSS_COL_TYPE_YI_TING		= 5;	// 一听		1张牌
+	EN_DSS_COL_TYPE_YI_TUO		= 6;	// 一妥		2张牌
+	EN_DSS_COL_TYPE_YI_DENG		= 7;	// 一蹬		暂定一张
+	EN_DSS_COL_TYPE_YI_ZHAO 	= 8;	// 一招		暂定一张
+	EN_DSS_COL_TYPE_YI_GANG_5_5 	= 9;	// 一杠		5张
+	EN_DSS_COL_TYPE_YI_GANG_5_1 	= 10;	// 一杠		1张
+	EN_DSS_COL_TYPE_YI_AN_2		= 11;   // 扑克的一暗2    不放下手
+	EN_DSS_COL_TYPE_YI_DUI		= 12;   // 扑克的一对
+}
+
+enum ENDSSActionType
+{
+	EN_DSS_ACTION_UNKNOWN	= 0;
+	EN_DSS_ACTION_CHUPAI	= 1;
+	EN_DSS_ACTION_NAPAI 	= 2;
+	EN_DSS_ACTION_CHI 		= 3;
+	EN_DSS_ACTION_PENG 		= 4;
+	EN_DSS_ACTION_GANG		= 5;
+	EN_DSS_ACTION_HUPAI		= 6;
+	EN_DSS_ACTION_PASS		= 7;
+	EN_DSS_ACTION_AN		= 8;
+	EN_DSS_ACTION_TOU		= 9;
+	EN_DSS_ACTION_TING		= 10;
+	EN_DSS_ACTION_OUT_CARD  = 11;
+	EN_DSS_ACTION_QIANG_ZHUANG  = 12;	// 抢庄
+	EN_DSS_ACTION_HUA_ZHUANG  = 13;		// 滑庄
+	EN_DSS_ACTION_TUO  		= 14;		// 妥牌
+	EN_DSS_ACTION_CHANGE_CARD  = 15;	// 换牌 liu ZJ
+	EN_DSS_ACTION_PRE_CHUPAI	= 16;		// 预出牌
+	EN_DSS_ACTION_BAO = 17;				// 报牌 liu
+	EN_DSS_ACTION_DENG		=18;
+	EN_DSS_ACTION_BAOPAI2	=19;
+	EN_DSS_ACTION_ZHAO		=20;
+	EN_DSS_ACTION_SHANG_SHOU	= 21;	// 翻牌上手
+	EN_DSS_ACTION_AN_KOU  	= 22;	// 暗扣
+	EN_DSS_ACTION_GANG_5_MING	= 23;	// 5张杠 吐火响（4+1），打抓专用
+	EN_DSS_ACTION_GANG_5_AN		= 24;	// 5张杠 吐火响（5），打抓专用
+	EN_DSS_ACTION_GANG_5_BA		= 25;	// 5张杠 杀响（3+1+1），打抓专用
+	EN_DSS_ACTION_GANG_MING		= 26;	// 4张杠
+	EN_DSS_ACTION_GANG_AN		= 27;	// 4张杠
+	EN_DSS_ACTION_GANG_BA		= 28;	// 4张杠
+	EN_DSS_ACTION_KOU			= 29; 	// 扣牌
+
+	EN_DSS_ACTION_AN_2		=30;  // 扑克的暗牌，不放下手
+	EN_DSS_ACTION_BAO_ZI		= 31; 	// 包子
+}
+enum ENTeaBarDateType
+{
+	EN_TeaBar_Date_Type_Today = 1;//今日
+	EN_TeaBar_Date_Type_Yesterday = 2;//昨日
+	EN_TeaBar_Date_Type_Week = 3;//本周
+	EN_TeaBar_Date_Type_Last_Week = 4;//上周
+	EN_TeaBar_Date_Type_Month = 5;//本月
+	EN_TeaBar_Date_Type_Last_Month = 6;//上月
+	EN_TeaBar_Date_Type_History = 7;//历史
+
+}
+
+//茶馆支付方式
+enum ENTeaBarPayType
+{
+	EN_TeaBar_Pay_Type_Master = 0;//茶馆主人支付
+	EN_TeaBar_Pay_Type_AA = 1;//茶馆玩家均摊
+}
+
+
+enum ENDSSPlayType
+{
+	EN_DSS_PLAY_TYPE_TOU_JIA_DANG=1;//偷家挡
+	EN_DSS_PLAY_TYPE_ZOU_DANG=2;//走挡
+	EN_DSS_PLAY_TYPE_5_MEN_HONG = 3;//5门红
+	EN_DSS_PLAY_TYPE_6_MEN_HONG = 4;//6门红
+}
+
+enum ENDSSGamePlayType
+{
+	EN_DSS_GAME_PLAY_TYPE_5_HONG_5_HEI =1; //5红5黑
+	EN_DSS_GAME_PLAY_TYPE_5_HONG_6_HEI =2;	//5红6黑
+	EN_DSS_GAME_PLAY_TYPE_ZDZC = 3;//正打正吃
+	EN_DSS_GAME_PLAY_TYPE_LDLC = 4;//乱打乱吃
+	EN_DSS_GAME_PLAY_TYPE_soft_four = 5; // 软4张
+	EN_DSS_GAME_PLAY_TYPE_hard_four = 6;// 硬4张
+	EN_DSS_GAME_PLAY_TYPE_TI_FAN = 7; //梯番 扑克玩法
+	EN_DSS_GAME_PLAY_TYPE_GUN_FAN = 8 ; //滚番 扑克玩法
+	EN_DSS_GAME_PLAY_TYPE_CHAO_FAN_JIA_DI = 9 ; // 超番加底
+}
+
+enum ENDSSGamePlayType1
+{
+	EN_DSS_GAME_PLAY_TYPE_1_QUANHEI_1FAN =1; //全黑一番
+	EN_DSS_GAME_PLAY_TYPE_1_QUANHEI_2FAN =2;	//全黑二番
+}
+
+enum ENDSSBaoType
+{
+	EN_DSS_BAO_TYPE_GUO_CHI = 1;//过吃
+	EN_DSS_BAO_TYPE_HOU_DUI = 2;//后对
+	EN_DSS_BAO_TYPE_DIAO_KAN = 3;//掉坎
+	EN_DSS_BAO_TYPE_SI_WEI = 4;//四位
+	EN_DSS_BAO_TYPE_TUI = 5;//退
+	EN_DSS_BAO_TYPE_PO_DUI_7 = 6;//破对7
+	EN_DSS_BAO_TYPE_COMMON = 7; // 一般情况的报牌
+	EN_DSS_BAO_TYPE_CHI_CHENG_KAN = 8; // 吃成坎
+	EN_DSS_BAO_TYPE_CHI_CHI_FOUR = 9; // 吃成四根
+	EN_DSS_BAO_TYPE_CHI_GET_FOUR = 10; // 四根上手
+	EN_DSS_BAO_TYPE_WU_WEI = 11;//五位
+	EN_DSS_BAO_TYPE_CHAI_MAO = 12;// 拆卯
+	EN_DSS_BAO_TYPE_PO_DUI = 13;//破对(南充天地钉斧)
+}
+
+enum ENActivityID
+{
+	EN_Activity_ID_DING_DIAN_WAN_PAI = 1;//定点玩牌
+	EN_Activity_ID_PERIOD_WAN_PAI = 2;//一段时间内玩牌
+}
+
+
+// =============================== 上大人 ====================================
+enum ENSDRStyleType
+{
+	EN_SDR_STYPE_TYPE_Default = 0;
+	EN_SDR_STYPE_TYPE_Hu = 1;			// 胡
+	EN_SDR_STYPE_TYPE_Pi_Hu = 2;		// 屁胡
+	EN_SDR_STYPE_TYPE_Yi_Chong = 3;		// 一冲
+	EN_SDR_STYPE_TYPE_Lao_Chong = 4;	// 老冲
+	EN_SDR_STYPE_TYPE_Da_Hu = 5;		// 大胡
+	EN_SDR_STYPE_TYPE_Xiao_Hu = 6;		// 笑胡
+	EN_SDR_STYPE_TYPE_Shu_Hu = 7;		// 利川_数胡
+	EN_SDR_STYPE_TYPE_Shu_Da_Hu = 8;	// 数大胡
+	
+	EN_SDR_STYPE_TYPE_Dan_Diao = 15;   //利川_单调
+	EN_SDR_STYPE_TYPE_Di_Hu = 19;   // 地胡
+	EN_SDR_STYPE_TYPE_Tian_Hu = 20;   // 天胡
+	EN_SDR_STYPE_TYPE_Ka_20_Hu = 21;   //利川_卡20胡
+	EN_SDR_STYPE_TYPE_Ka_Hu = 22;   //利川_卡胡
+	EN_SDR_STYPE_TYPE_Ban_Long = 23;   //利川_半龙
+	EN_SDR_STYPE_TYPE_Man_Long = 24;   //利川_满龙
+	EN_SDR_STYPE_TYPE_San_Ban_Gao = 25;   //利川_三版高
+	EN_SDR_STYPE_TYPE_Shuang_Long_Bao_Zhu = 26;   //利川_双龙保主
+	EN_SDR_STYPE_TYPE_Piao = 27;		// 利川_飘
+	EN_SDR_STYPE_TYPE_Cheng_Dui = 28;   //利川_成对
+	EN_SDR_STYPE_TYPE_Jin_San_Ban_Gao = 29;   //利川_精三版高
+	EN_SDR_STYPE_TYPE_Quan_You_Hu = 30;   //利川_全有胡
+	EN_SDR_STYPE_TYPE_Liu_Tou_Long = 31;   //利川_六头龙
+	EN_SDR_STYPE_TYPE_Liu_Tou_Long_2 = 32;   //利川_六头龙*2
+	EN_SDR_STYPE_TYPE_Qing_Hu = 33;   // 巴东 清胡
+	EN_SDR_STYPE_TYPE_Ku_Hu = 34;   // 巴东 枯胡
+	EN_SDR_STYPE_TYPE_Qi_Peng = 35;   // 巴东 七碰
+	EN_SDR_STYPE_TYPE_Qing_4_bei = 36;   // 巴东 清4倍
+	EN_SDR_STYPE_TYPE_Zi_Mo = 37;   // 自摸
+	EN_SDR_STYPE_TYPE_Fang_Pao = 38;   // 放炮
+	EN_SDR_STYPE_TYPE_Chi_Re = 39;   // 吃热
+
+	EN_SDR_STYPE_TYPE_Chang = 40;   // 厂
+	EN_SDR_STYPE_TYPE_Zhong_Chang = 41;   // 重厂
+	EN_SDR_STYPE_TYPE_Zhong_Zhong_Chang = 42;   // 重重厂
+	EN_SDR_STYPE_TYPE_Ping_Hu = 43;   // 平胡
+	EN_SDR_STYPE_TYPE_Xiao_Jia = 44;   // 小甲
+	EN_SDR_STYPE_TYPE_Da_Jia = 45;   // 大甲
+	EN_SDR_STYPE_TYPE_Chang_Ysg = 46;   // 场（野三关）
+	EN_SDR_STYPE_TYPE_Wu_Shen = 47;   // 无神 来凤
+	EN_SDR_STYPE_TYPE_Wu_Shen_Mo_Shen = 48;   // 无神摸神 来凤
+	EN_SDR_STYPE_TYPE_Fen_Hu = 49;   // 分胡 来凤
+	EN_SDR_STYPE_TYPE_Quan_Hei = 50;   // 全黑 来凤
+	EN_SDR_STYPE_TYPE_Quan_Hong = 51;   // 全红 来凤
+	EN_SDR_STYPE_TYPE_Zha_Hu = 52;   // 诈胡（笑胡） 来凤
+	EN_SDR_STYPE_TYPE_Ba_Fan = 53;   // 8番 巴东
+	EN_SDR_STYPE_TYPE_Quan_Fen = 54;   // 全分胡 来凤
+	EN_SDR_STYPE_TYPE_Qi_Shou_Wu_Fen = 55;   // 起手无分 来凤
+	EN_SDR_STYPE_TYPE_Four_Shen = 56;   // 4神胡牌 来凤
+	EN_SDR_STYPE_TYPE_Jin_Quan = 57;   // 进圈（野三关）
+	EN_SDR_STYPE_TYPE_Su_Hu = 58;//素胡桑植96
+	EN_SDR_STYPE_TYPE_Hun_Hu = 59;//荤胡
+	EN_SDR_STYPE_TYPE_Qing_Yi_Se = 60;//清一色
+	EN_SDR_STYPE_TYPE_Tai_Hu = 61;//台胡
+	EN_SDR_STYPE_TYPE_Su_Da_Hu = 62;//素大胡
+	EN_SDR_STYPE_TYPE_Su_Tai_Hu = 63;//素台胡
+	EN_SDR_STYPE_TYPE_Hun_Da_Hu = 64;//荤大胡
+	EN_SDR_STYPE_TYPE_Hun_Tai_Hu = 65;//荤台胡
+	EN_SDR_STYPE_TYPE_Tai_Tai_Hu = 66;//台台胡
+	EN_SDR_STYPE_TYPE_Su_Qing_Hu = 67;//素清胡
+	EN_SDR_STYPE_TYPE_Hun_Qing_Hu = 68;//荤清胡
+	EN_SDR_STYPE_TYPE_Zhua_Zhu = 69;//抓猪
+	EN_SDR_STYLE_TYPE_Chun_Tian = 70; // 春天
+	EN_SDR_STYPE_TYPE_Ka_30_Hu = 71; // 卡30胡
+	EN_SDR_STYLE_TYPE_Mian_Zhan = 72; // 免战
+	EN_SDR_STYPE_TYPE_Ba_Men = 73;//八门
+	EN_SDR_STYPE_TYPE_Hei_Da_Hu = 74;// 黑大胡
+	EN_SDR_STYLE_TYPE_Tuo_La_Ji = 75; // 拖拉机
+	EN_SDR_STYLE_TYPE_Ying_Chong = 76; // 硬冲
+	EN_SDR_STYLE_TYPE_Qi_Dui = 77; // 七对
+	EN_SDR_STYLE_TYPE_Qi_Dui_One = 78; // 豪华七对
+	EN_SDR_STYLE_TYPE_Qi_Dui_Two = 79; // 双豪华七对
+	EN_SDR_STYLE_TYPE_Qi_Dui_Three = 80; // 三豪华七对
+	EN_SDR_STYLE_TYPE_Luan_Jiang = 81; // 258乱将
+	EN_SDR_STYLE_TYPE_Xiao_Xue = 82; // 小血
+	EN_SDR_STYLE_TYPE_Hei_Guan	= 83;	//黑关
+	EN_SDR_STYLE_TYPE_Bao_Pei	= 84;	//包赔
+	EN_SDR_STYLE_TYPE_Ming_Pai = 85; // 明牌
+	EN_SDR_STYLE_TYPE_Ming_Pai_Start = 86; // 明牌开始
+	EN_SDR_STYLE_TYPE_Qiang_Di_Zhu = 87; // 抢地主
+	EN_SDR_STYLE_TYPE_Jia_Bei = 88; // 加倍
+	EN_SDR_STYLE_TYPE_Jin_Long	= 89;	//金龙 
+	EN_SDR_STYLE_TYPE_Yin_Long	= 90;	//银龙 
+	EN_SDR_STYLE_TYPE_Si_Gui	= 91;	//四鬼碰一鬼
+	EN_SDR_STYLE_TYPE_Wu_Gui	= 92;	//五鬼在手
+	EN_SDR_STYLE_TYPE_Peng_Peng_Hu = 93; // 碰碰胡
+	EN_SDR_STYLE_TYPE_Jin_Dou = 94; // 金豆
+	EN_SDR_STYLE_TYPE_7_Da_Xia = 95; // 七大虾
+	EN_SDR_STYLE_TYPE_Qiu_8_Dou = 96; // 秋八斗
+	EN_SDR_STYLE_TYPE_Bai_Hu = 97;	// 白胡
+	EN_SDR_STYLE_TYPE_Di_Hu = 98;	// 递胡
+	EN_SDR_STYLE_TYPE_Cong_Hu = 99; // 聪胡
+	EN_SDR_STYLE_TYPE_Hei_Ka_San = 100; //黑卡三
+	EN_SDR_STYLE_TYPE_Ka_San = 101; //卡三
+	EN_SDR_STYLE_TYPE_Shi_Jin = 102; //十金
+	EN_SDR_STYLE_TYPE_Hei_Shi_Jin = 103; //黑十金
+	EN_SDR_STYLE_TYPE_Hong_Chong = 104; //红冲胡
+	EN_SDR_STYLE_TYPE_Hei_Chong = 105; //黑冲胡
+	EN_SDR_STYLE_TYPE_Fan_Chun_Tian = 106; // 反春天
+	EN_SDR_STYLE_TYPE_Quan_Qiu_Ren = 107; // 全求人
+	EN_SDR_STYLE_TYPE_Jin_Ding = 108; // 金顶
+	EN_SDR_STYLE_TYPE_Tai_Zhuang = 109; // 抬庄
+	EN_SDR_STYPE_TYPE_Ying_Pi_Hu = 110; // 硬屁胡
+	EN_SDR_STYLE_TYPE_Ying_Xiao_Xue = 111; // 硬小血
+	EN_SDR_STYLE_TYPE_Da_Xue = 112; // 大血
+	EN_SDR_STYLE_TYPE_Gang_Shang_Hua = 113; // 杠上花
+	EN_SDR_STYLE_TYPE_Gang_Shang_Pao = 114; // 杠上炮
+	EN_SDR_STYLE_TYPE_Feng_Ding = 115; // 封顶
+	EN_SDR_STYLE_TYPE_Tou_You	= 116;	//头游
+	EN_SDR_STYLE_TYPE_Er_You	= 117;	//二游
+	EN_SDR_STYLE_TYPE_San_You	= 118;	//三游
+	EN_SDR_STYLE_TYPE_Wei_You 	= 119;	//尾游
+	EN_SDR_STYLE_TYPE_Niu_Gui_2	= 120;	//牛鬼2
+	EN_SDR_STYLE_TYPE_Niu_Gui_3	= 121;	//牛鬼3
+	EN_SDR_STYLE_TYPE_Niu_Gui_5 = 122;	//牛鬼5
+	EN_SDR_STYLE_TYPE_Tou_Xiang	= 123;	//投降	（双牛玩家投降）
+	EN_SDR_STYLE_TYPE_Shi_Dui = 124; // 十对胡
+	EN_SDR_STYLE_TYPE_Hei_Yi_Se = 125; // 黑一色
+	EN_SDR_STYLE_TYPE_QIANG_GANG_HU = 126; //抢杠胡
+	EN_SDR_STYLE_TYPE_An_Gang_Kai_Hua = 127;
+	EN_SDR_STYLE_TYPE_Ming_Gang_Kai_Hua = 128;
+	EN_SDR_STYLE_TYPE_Bao_Gang_Kai_Hua = 129;
+	EN_SDR_STYLE_TYPE_Bao_Hu	= 130;	//包胡
+	EN_SDR_STYLE_TYPE_Long_Gong_Bei = 131;	// 龙拱背
+}
+
+enum ENSDRColType
+{
+	EN_SDR_COL_TYPE_YI_KOU		= 1;	// 一口		2张牌
+	EN_SDR_COL_TYPE_YI_CHI		= 2;	// 一吃		3张牌
+	EN_SDR_COL_TYPE_YI_PENG		= 3;	// 一碰		3张牌
+	EN_SDR_COL_TYPE_YI_WEI		= 4;	// 一偎		3张牌
+	EN_SDR_COL_TYPE_YI_PAO		= 5;	// 一跑		(4+n)张牌
+	EN_SDR_COL_TYPE_YI_TI		= 6;	// 一提		(4+n)张牌
+	EN_SDR_COL_TYPE_YI_KAN		= 7;	// 一坎
+	EN_SDR_COL_TYPE_YI_ZHANG    = 8;	// 一张
+	EN_SDR_COL_TYPE_YI_DIAO     = 9;	// 一吊
+	EN_SDR_COL_TYPE_YI_DUO_LONG     = 10;	// 一夺龙
+	EN_SDR_COL_TYPE_YI_ZHAO     = 11;	// 一招
+	EN_SDR_COL_TYPE_YI_GUA     	= 12;	// 一挂
+	EN_SDR_COL_TYPE_YI_GANG_ZI 	= 13;	// 一杠子
+	EN_SDR_COL_TYPE_YI_DUI_ZI 	= 14;	// 一对子
+	EN_SDR_COL_TYPE_YI_ZHAN		= 15;	// 一占
+	EN_SDR_COL_TYPE_YI_YIN_LONG		= 16;	// 一银龙
+	EN_SDR_COL_TYPE_YI_JIN_LONG		= 17;	// 一金龙
+	EN_SDR_COL_TYPE_YI_TING		= 18;	// 一听
+	EN_SDR_COL_TYPE_YI_TIAN		= 19;	// 一填
+	EN_SDR_COL_TYPE_YI_MAI		= 20;	// 一卖
+	EN_SDR_COL_TYPE_YI_GANG 	= 21;	// 一杠（麻将）
+	EN_SDR_COL_TYPE_YI_AN_GANG 	= 22;	// 一暗杠（麻将）
+	EN_SDR_COL_TYPE_YI_KAI		= 23;	// 一开
+	EN_SDR_COL_TYPE_YI_GANG_2 	= 24;	// 一杠（麻将 特殊杠 赖子痞子杠）
+	EN_SDR_COL_TYPE_YI_HUA		= 25;	// 一滑
+	EN_SDR_COL_TYPE_YI_PENG_GANG	= 26;	// 一碰杠
+}
+
+enum ENSDRActionType
+{
+	EN_SDR_ACTION_UNKNOWN	= 0;
+	EN_SDR_ACTION_CHUPAI	= 1;	// 出牌
+	EN_SDR_ACTION_NAPAI 	= 2;	// 拿牌
+	EN_SDR_ACTION_WAI 		= 3;	// 歪
+	EN_SDR_ACTION_CHI 		= 4;	// 吃
+	EN_SDR_ACTION_PENG 		= 5;	// 碰
+	EN_SDR_ACTION_WEI		= 6;	// 偎
+	EN_SDR_ACTION_PAO		= 7;	// 跑
+	EN_SDR_ACTION_TI		= 8;	// 提
+	EN_SDR_ACTION_HUPAI		= 9;	// 胡
+	EN_SDR_ACTION_PASS		= 10;	// 过
+	EN_SDR_ACTION_OUT_CARD 	= 11;	//
+	EN_SDR_ACTION_SHANG_SHOU = 12;	// 上手
+	EN_SDR_ACTION_BAO 		= 13;	//利川_报牌
+	EN_SDR_ACTION_XIAO_HU 	= 14;	// 笑胡
+	EN_SDR_ACTION_KUA 		= 15;	// 挎
+	EN_SDR_ACTION_QI_HU		= 16;	// 弃胡
+	EN_SDR_ACTION_UPDATE    = 17;   //更新out_col
+	EN_SDR_ACTION_ZHAO    	= 18;   // 招
+	EN_SDR_ACTION_DENG    	= 19;   // 登
+	EN_SDR_ACTION_QIANG_ZHUANG = 20;	// 抢庄
+	EN_SDR_ACTION_KOU		= 21;	// 扣牌
+	EN_SDR_ACTION_SHOW       = 22; //亮牌
+	EN_SDR_ACTION_TOU		= 23;	// 偷牌 
+	EN_SDR_ACTION_DA        = 24; //打牌
+	EN_SDR_ACTION_ZHUA        = 25; //抓
+	EN_SDR_ACTION_TUO        = 26; //拖
+	EN_SDR_ACTION_PRE_CHUPAI = 27;	// 预出牌
+	EN_SDR_ACTION_LIANG_LONG = 28; //亮龙
+	EN_SDR_ACTION_BUY 		= 29; // 买牌
+	EN_SDR_ACTION_SELL 		= 30; // 卖牌
+	EN_SDR_ACTION_JIA_BEI  	= 31; // 加倍
+	EN_SDR_ACTION_BU_JIA_BEI= 32; // 不加倍
+	EN_SDR_ACTION_ZHUA_PAI  = 33;	// 抓牌
+	EN_SDR_ACTION_NOTIFY_BUY = 34; // 通知买牌
+	EN_SDR_ACTION_BU_QIANG = 35; // 不抢地主
+	EN_SDR_ACTION_QIANG_DI_ZHU = 36; // 抢地主
+	EN_SDR_ACTION_QIANG_MIAN_ZHAN = 37; // 免战
+	EN_SDR_ACTION_FAN_DI_PAI = 38; // 翻底牌
+	EN_SDR_ACTION_ZHAN = 39; // 占
+	EN_SDR_ACTION_KAI = 40; // 开
+	EN_SDR_ACTION_TING = 41; // 听
+	EN_SDR_ACTION_TIAN		 = 42;	//填
+	EN_SDR_ACTION_MAI		 = 43;	//卖赖子
+	EN_SDR_ACTION_GANG        = 44; //杠
+	EN_SDR_ACTION_AN_GANG        = 45; //暗杠
+	EN_SDR_ACTION_KAI_2 = 46; // 开(鬼牌用的开)
+	EN_SDR_ACTION_MING_PAI = 47; // 明牌
+	EN_SDR_ACTION_BU_MING = 48; // 不明牌
+	EN_SDR_ACTION_JIAO_DI_ZHU = 49; // 叫地主
+	EN_SDR_ACTION_BU_JIAO = 50; // 不叫地主
+	EN_SDR_ACTION_ZHAO_2    	= 51;   // 招（4招1）
+	EN_SDR_ACTION_PIAO    	= 52;   // 漂
+	EN_SDR_ACTION_CHU	= 53;//出分
+	EN_SDR_ACTION_GANG_2        = 54; // 特殊杠 赖子杠 痞子杠
+	EN_SDR_ACTION_GIVE_UP	= 55;	//投降
+	EN_SDR_ACTION_NOT_GIVE_UP	= 56;	//不投降
+	EN_SDR_ACTION_LIANG_NIU		= 57;	//亮牛
+	EN_SDR_ACTION_JIAN = 58; // 捡 
+	EN_SDR_ACTION_HUA = 59; // 滑
+	EN_SDR_ACTION_HUAN_PAI = 60; //换牌
+	EN_SDR_ACTION_NOT_LIANG_NIU	= 61;	//不亮牛
+	EN_SDR_ACTION_GEN_FENG = 62; // 跟风
+	EN_SDR_ACTION_PENG_GANG = 63; // 碰杠
+	EN_SDR_ACTION_DISSOLVE_TABLE = 64; // 解散房间
+	EN_SDR_ACTION_WA = 65; // 挖
+	EN_SDR_ACTION_BU_WA = 66; // 不挖
+}	
+
+// ======================================================
+// 牌类型
+enum ENCardType
+{
+	EN_CARD_TYPE_DIAMOND	= 1; // 方片
+	EN_CARD_TYPE_CLUB		= 2; // 梅花
+	EN_CARD_TYPE_HEART		= 3; // 红心
+	EN_CARD_TYPE_SPADE		= 4; // 黑桃	
+}
+// 牌点数
+enum ENCardValue
+{
+	EN_CARD_VALUE_2		= 2;  // 2
+	EN_CARD_VALUE_3		= 3;  // 3
+	EN_CARD_VALUE_4		= 4;  // 4
+	EN_CARD_VALUE_5		= 5;  // 5
+	EN_CARD_VALUE_6		= 6;  // 6
+	EN_CARD_VALUE_7		= 7;  // 7
+	EN_CARD_VALUE_8		= 8;  // 8
+	EN_CARD_VALUE_9		= 9;  // 9
+	EN_CARD_VALUE_10      = 10; // 10 A
+	EN_CARD_VALUE_JACK    = 11; // J B
+	EN_CARD_VALUE_QUEEN   = 12; // Q C
+	EN_CARD_VALUE_KING    = 13; // K D
+	EN_CARD_VALUE_ACE     = 14; // A E
+}
+// 牌型
+enum ENPokerType
+{
+	EN_POKER_TYPE_UNKONWN			= 0; // 未知
+	EN_POKER_TYPE_SINGLE_CARD		= 1; // 单牌
+	EN_POKER_TYPE_PAIR				= 2; // 对子
+	EN_POKER_TYPE_TRIPLE			= 3; // 三不带
+	EN_POKER_TYPE_TRIPLE_WITH_ONE	= 4; // 三带一
+	EN_POKER_TYPE_TRIPLE_WITH_TWO	= 5; // 三带二
+	EN_POKER_TYPE_STRAIGHT			= 6; // 顺子
+	EN_POKER_TYPE_STRAIGHT_2		= 7; // 双顺(连对)
+	EN_POKER_TYPE_STRAIGHT_3		= 8; // 三顺(飞机)
+	EN_POKER_TYPE_STRAIGHT_3_2		= 9; // 三顺(三带二的顺子)
+	EN_POKER_TYPE_QUADRUPLE_WITH_TWO	= 10; // 四带二
+	EN_POKER_TYPE_QUADRUPLE_WITH_ONE	= 11; // 四带一
+	EN_POKER_TYPE_STRAIGHT_3_4		= 12; // 三顺(随意带<=max)
+	EN_POKER_TYPE_QUADRUPLE_WITH_THREE	= 13; // 四带三
+	EN_POKER_TYPE_STRAIGHT_3_1		= 14; // 三顺(每个飞机带一张)
+	EN_POKER_TYPE_QUADRUPLE			= 15;	//四不带
+	EN_POKER_TYPE_TONGHUA			= 16;	//同花
+	EN_POKER_TYPE_TONGHUASHUN		= 17;	//同花顺
+	EN_POKER_TYPE_QUADRUPLE_WITH_TWO_PAIR	= 18;	//四带两对
+	
+	EN_POKER_TYPE_SOFT_BOMB			= 20; // 软炸弹
+	EN_POKER_TYPE_SOFT_BOMB_OF_JOKER	= 21; // 软王炸
+	EN_POKER_TYPE_BOMB				= 22; // (硬)炸弹
+	EN_POKER_TYPE_BOMB_OF_JOKER		= 23; // (硬)王炸
+	EN_POKER_TYPE_BOMB_OF_FIVE		= 24; // (软)五龙炸
+	EN_POKER_TYPE_BOMB_OF_FIVE_JOKER	= 25; // (硬)五龙炸 = 三王炸
+	EN_POKER_TYPE_SOFT_BOMB_OF_GUN		= 26; // (软)滚龙炸
+	EN_POKER_TYPE_BOMB_OF_GUN		= 27; // (硬)滚龙炸
+	EN_POKER_TYPE_BOMB_OF_3A		= 28 ;	//3a炸
+	EN_POKER_TYPE_BOMB_OF_LAIZI		=29; //四癞子炸
+}
+
+enum ENPokerYouWinType
+{
+	EN_POKER_YOU_WIN_TYPE_UNKONWN	= 0;
+	EN_POKER_YOU_WIN_TYPE_1_1_WIN_FOR_FOUR_SEAT	= 1;
+	EN_POKER_YOU_WIN_TYPE_1_0_1_WIN_FOR_FOUR_SEAT	= 2;
+	EN_POKER_YOU_WIN_TYPE_1_0_0_WIN_FOR_FOUR_SEAT	= 3;
+	EN_POKER_YOU_WIN_TYPE_SINGE_WIN_FOR_FOUR_SEAT	= 4;
+	EN_POKER_YOU_WIN_TYPE_SINGE_FAILE_FOR_FOUR_SEAT	= 5;
+	EN_POKER_YOU_WIN_TYPE_NO_WIN_FOR_FOUR_SEAT	= 6;
+	EN_POKER_YOU_WIN_TYPE_1_WIN_FOR_THREE_SEAT	= 7;
+	EN_POKER_YOU_WIN_TYPE_1_0_WIN_FOR_THREE_SEAT	= 8;
+	EN_POKER_YOU_WIN_TYPE_1_1_WIN_FOR_THREE_SEAT	= 9;
+}
+
+enum ENMSDRPlayType
+{
+	ENM_SDR_PLAY_TYPE_XIAN_DUI = 1;//限对2次
+	ENM_SDR_PLAY_TYPE_ZHUO_MIAN_SUAN_ZHU_JING = 2;//桌面算主精
+	ENM_SDR_PLAY_TYPE_ZI_DAI_1_KAN_JING = 3;//自带一坎精
+	ENM_SDR_PLAY_TYPE_ZI_DAI_2_HUA_JING = 4;//自带两花精
+	ENM_SDR_PLAY_TYPE_ZHI_NENG_ZI_MO = 5;//只能自摸
+}
+
+enum ENPlayerMatchInfo
+{
+	EN_PLAYER_MATCH_TYPE_UNKONWN			= 0; // 未知
+	EN_PLAYER_MATCH_TYPE_HAS_BAOMING		= 1; //报名
+	EN_PLAYER_MATCH_TYPE_HAS_BEGIN		    = 2; // 比赛ING
+	EN_PLAYER_MATCH_TYPE_HAS_NOT_FINISH		= 3; // 未完成比赛
+	EN_PLAYER_MATCH_TYPE_HAS_FINISH         = 4; // 已经完成比赛
+}
+
+enum ENLogoutTableReason
+{
+	EN_LOGOUT_TABOLE_REASON_FINISH_GAME = 0;		//正常结束
+	EN_LOGOUT_TABOLE_REASON_TRUSTEESHIP_ERROR	= 1;	//异常托管结束
+	EN_LOGOUT_TABOLE_REASON_CHANGE_TABLE 		= 2;	//离开桌子的原因
+}
+
+enum ENSeatAutoPlayState
+{
+	EN_SEAT_AUTO_PLAY_STATE_INITIATIVE_PLAY	= 0;	//玩家主动出牌，非托管状态	
+	EN_SEAT_AUTO_PLAY_STATE_AUTO_PLAY 		= 1;	//状态为自动出牌状态，出牌状态	
+}
+
+enum ENUserClientType
+{
+	EN_USER_CLIENT_TYPE_APP = 0;
+	EN_USER_CLIENT_TYPE_H5 = 1;
+}
+
+enum ENLogoutReason
+{
+	EN_Logout_Reason_Normal = 1;
+	EN_Logout_Reason_Change_Table = 2;
+	EN_Logout_Reason_No_Enough_Chip = 3;
+}
+
+//当前金币状态
+enum ENCoinsState
+{
+	EN_Coins_State_Normal				= 0;	//正常状态	
+	EN_Coins_State_Too_Much_For_level	= 1;	//与当前等级相比太多
+	EN_Coins_State_Too_Less_For_level	= 2;	//与当前等级相比太少
+	EN_Coins_State_Broke				= 3;	//破产
+}
