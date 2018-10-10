@@ -1,2 +1,2 @@
 # coins_ddz
-a ddz server
+一个斗地主项目
